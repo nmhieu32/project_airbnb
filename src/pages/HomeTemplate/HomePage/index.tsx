@@ -1,6 +1,25 @@
 
 export default function HomePage() {
   return (
-    <div>HomePage</div>
+    <div>HomePage
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+    </div>
   )
 }

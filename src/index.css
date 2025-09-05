@@ -118,3 +118,9 @@
     @apply bg-background text-foreground;
   }
 }
+
+.my-active {
+  display: block;
+  color: #3674B5;
+  background-color: transparent;
+}
