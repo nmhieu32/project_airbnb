@@ -1,25 +1,11 @@
+import CarouselHome from "./Carousel";
+import SearchBarHome from "./SearchBar";
 
 export default function HomePage() {
   return (
-    <div>HomePage
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-    </div>
-  )
+    <>
+      <CarouselHome />
+      <SearchBarHome/>
+    </>
+  );
 }
