@@ -26,7 +26,14 @@ const BookingRoomManagement = lazy(
 
 const withSuspense = (Component: LazyExoticComponent<FC>) => {
   return (
-    <Suspense fallback={<div>...Loading</div>}>
+    <Suspense
+      fallback={
+        <div className="backdrop">
+          {" "}
+          <div className="loader mx-auto"></div>
+        </div>
+      }
+    >
       <Component />
     </Suspense>
   );

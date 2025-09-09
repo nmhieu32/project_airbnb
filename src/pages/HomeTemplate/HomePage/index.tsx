@@ -1,4 +1,6 @@
 import CarouselHome from "./Carousel";
+import CategorySection from "./CategorySection";
+import DefaultLocation from "./Location";
 import SearchBarHome from "./SearchBar";
 
 export default function HomePage() {
@@ -6,6 +8,8 @@ export default function HomePage() {
     <>
       <CarouselHome />
       <SearchBarHome/>
+      <DefaultLocation/>
+      <CategorySection/>
     </>
   );
 }
