@@ -11,7 +11,6 @@ export default function SearchBarHome() {
       <div className="max-w-6xl mx-auto">
         <div className="bg-white rounded-2xl shadow-xl p-2">
           <div className="flex flex-col md:flex-row items-center">
-            {/* Location */}
             <div className="flex-1 px-4 py-3 border-r border-gray-200 min-w-0">
               <div className="flex items-center">
                 <MapPin className="h-5 w-5 text-gray-400 mr-3 flex-shrink-0" />
@@ -20,7 +19,7 @@ export default function SearchBarHome() {
                     Địa điểm
                   </div>
                   <select
-                    value="{location}"
+                    value={location}
                     onChange={(e) => setLocation(e.target.value)}
                     className="w-full text-sm text-gray-500 bg-transparent border-none focus:outline-none"
                   >
@@ -35,7 +34,6 @@ export default function SearchBarHome() {
               </div>
             </div>
 
-            {/* Check-in */}
             <div className="flex-1 px-4 py-3 border-r border-gray-200 min-w-0">
               <div className="flex items-center">
                 <Calendar className="h-5 w-5 text-gray-400 mr-3 flex-shrink-0" />
@@ -54,7 +52,6 @@ export default function SearchBarHome() {
               </div>
             </div>
 
-            {/* Check-out */}
             <div className="flex-1 px-4 py-3 border-r border-gray-200 min-w-0">
               <div className="flex items-center">
                 <Calendar className="h-5 w-5 text-gray-400 mr-3 flex-shrink-0" />
@@ -73,7 +70,6 @@ export default function SearchBarHome() {
               </div>
             </div>
 
-            {/* Guests */}
             <div className="flex-1 px-4 py-3 min-w-0">
               <div className="flex items-center">
                 <Users className="h-5 w-5 text-gray-400 mr-3 flex-shrink-0" />
@@ -95,9 +91,8 @@ export default function SearchBarHome() {
               </div>
             </div>
 
-            {/* Search Button */}
             <div className="px-2">
-              <button className="bg-gradient-to-r from-red-500 to-red-600 text-white p-4 rounded-full hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+              <button className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-4 rounded-full hover:shadow-lg transition-all duration-300 transform hover:scale-105">
                 <Search className="h-5 w-5" />
               </button>
             </div>

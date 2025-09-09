@@ -5,3 +5,11 @@ export interface Location {
     quocGia:   string;
     hinhAnh:   string;
 }
+
+export interface DataLocation {
+    pageIndex: number;
+    pageSize:  number;
+    totalRow:  number;
+    keywords:  null;
+    data:      Location[];
+}

@@ -1,113 +1,80 @@
-import {
-  Facebook,
-  Instagram,
-  Mail,
-  MapPin,
-  Phone,
-  Twitter,
-} from "lucide-react";
+import { Facebook, Instagram, Twitter } from "lucide-react";
+
 
 export default function Footer() {
+  const link = "https://www.airbnb.com.vn/";
   return (
-    <footer className="bg-gray-900 text-white py-12 px-4">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Company Info */}
-          <div>
-            <div className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent mb-4">
-              LuxStay
-            </div>
-            <p className="text-gray-400 mb-4">
-              Mang đến trải nghiệm nghỉ dưỡng cao cấp với những căn hộ tuyệt đẹp
-              tại Việt Nam.
-            </p>
-            <div className="flex space-x-4">
-              <Facebook className="h-5 w-5 text-gray-400 hover:text-white cursor-pointer transition-colors" />
-              <Instagram className="h-5 w-5 text-gray-400 hover:text-white cursor-pointer transition-colors" />
-              <Twitter className="h-5 w-5 text-gray-400 hover:text-white cursor-pointer transition-colors" />
-            </div>
-          </div>
-
-          {/* Quick Links */}
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Liên kết nhanh</h4>
-            <ul className="space-y-2 text-gray-400">
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Về chúng tôi
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Căn hộ
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Dịch vụ
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Blog
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Support */}
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Hỗ trợ</h4>
-            <ul className="space-y-2 text-gray-400">
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Trung tâm trợ giúp
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Chính sách
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Điều khoản
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Bảo mật
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Contact */}
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Liên hệ</h4>
-            <ul className="space-y-2 text-gray-400">
-              <li className="flex items-center">
-                <Phone className="h-4 w-4 mr-2" />
-                +84 901 234 567
-              </li>
-              <li className="flex items-center">
-                <Mail className="h-4 w-4 mr-2" />
-                info@luxstay.vn
-              </li>
-              <li className="flex items-center">
-                <MapPin className="h-4 w-4 mr-2" />
-                TP. Hồ Chí Minh, Việt Nam
-              </li>
-            </ul>
-          </div>
+    <footer className="bg-white border-t mt-12">
+      <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-2 md:grid-cols-4 gap-8 text-sm text-gray-600">
+        <div>
+          <h3 className="font-semibold text-gray-900 mb-3">GIỚI THIỆU</h3>
+          <ul className="space-y-2">
+            <li><a href={link} target="blank" className="hover:underline">Phương thức hoạt động của Airbnb</a></li>
+            <li><a href={link} target="blank" className="hover:underline">Trang tin tức</a></li>
+            <li><a href={link} target="blank" className="hover:underline">Nhà đầu tư</a></li>
+            <li><a href={link} target="blank" className="hover:underline">Airbnb Plus</a></li>
+            <li><a href={link} target="blank" className="hover:underline">Airbnb Luxe</a></li>
+            <li><a href={link} target="blank" className="hover:underline">HotelTonight</a></li>
+            <li><a href={link} target="blank" className="hover:underline">Airbnb for Work</a></li>
+            <li><a href={link} target="blank" className="hover:underline">Nhờ có Host, mọi điều đều có thể</a></li>
+            <li><a href={link} target="blank" className="hover:underline">Cơ hội nghề nghiệp</a></li>
+            <li><a href={link} target="blank" className="hover:underline">Thư của nhà sáng lập</a></li>
+          </ul>
         </div>
 
-        {/* Copyright */}
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+        <div>
+          <h3 className="font-semibold text-gray-900 mb-3">CỘNG ĐỒNG</h3>
+          <ul className="space-y-2">
+            <li><a href={link} target="blank" className="hover:underline">Sự đa dạng và Cảm giác thân thuộc</a></li>
+            <li><a href={link} target="blank" className="hover:underline">Tiện nghi phù hợp cho người khuyết tật</a></li>
+            <li><a href={link} target="blank" className="hover:underline">Đối tác liên kết Airbnb</a></li>
+            <li><a href={link} target="blank" className="hover:underline">Chỗ ở cho tuyến đầu</a></li>
+            <li><a href={link} target="blank" className="hover:underline">Lượt giới thiệu của khách</a></li>
+            <li><a href={link} target="blank" className="hover:underline">Airbnb.org</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 className="font-semibold text-gray-900 mb-3">ĐÓN TIẾP KHÁCH</h3>
+          <ul className="space-y-2">
+            <li><a href={link} target="blank" className="hover:underline">Cho thuê nhà</a></li>
+            <li><a href={link} target="blank" className="hover:underline">Tổ chức Trải nghiệm trực tuyến</a></li>
+            <li><a href={link} target="blank" className="hover:underline">Tổ chức trải nghiệm</a></li>
+            <li><a href={link} target="blank" className="hover:underline">Đón tiếp khách có trách nhiệm</a></li>
+            <li><a href={link} target="blank" className="hover:underline">Trung tâm tài nguyên</a></li>
+            <li><a href={link} target="blank" className="hover:underline">Trung tâm cộng đồng</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 className="font-semibold text-gray-900 mb-3">HỖ TRỢ</h3>
+          <ul className="space-y-2">
+            <li><a href={link} target="blank" className="hover:underline">Biện pháp ứng phó với đại dịch COVID-19 của chúng tôi</a></li>
+            <li><a href={link} target="blank" className="hover:underline">Trung tâm trợ giúp</a></li>
+            <li><a href={link} target="blank" className="hover:underline">Các tùy chọn hủy</a></li>
+            <li><a href={link} target="blank" className="hover:underline">Hỗ trợ khu dân cư</a></li>
+            <li><a href={link} target="blank" className="hover:underline">Tin cậy và an toàn</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div className="border-t py-6 text-sm text-gray-500 px-6">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
           <p>
-            &copy; 2024 LuxStay. Tất cả quyền được bảo lưu. Được thiết kế với ❤️
-            tại Việt Nam.
+            © 2021 Airbnb, Inc. All rights reserved ·{" "}
+            <a href={link} target="blank" className="hover:underline">Quyền riêng tư</a> ·{" "}
+            <a href={link} target="blank" className="hover:underline">Điều khoản</a> ·{" "}
+            <a href={link} target="blank" className="hover:underline">Sơ đồ trang web</a>
           </p>
+          <div className="flex items-center space-x-4">
+            <a href={link} target="blank" className="hover:underline">🌐 Tiếng Việt (VN)</a>
+            <a href={link} target="blank" className="hover:underline">$ USD</a>
+            <div className="flex space-x-3">
+              <a href={link} target="blank" className="hover:text-gray-700"><Facebook/></a>
+              <a href={link} target="blank" className="hover:text-gray-700"><Twitter/></a>
+              <a href={link} target="blank" className="hover:text-gray-700"><Instagram/></a>
+            </div>
+          </div>
         </div>
       </div>
     </footer>
