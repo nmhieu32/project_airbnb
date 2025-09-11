@@ -3,11 +3,8 @@ import type { RouteObject } from "react-router-dom";
 
 const HomeTemplate = lazy(() => import("@/pages/HomeTemplate"));
 const HomePage = lazy(() => import("@/pages/HomeTemplate/HomePage"));
-const LoginPage = lazy(() => import("@/pages/AuthTemplate/LoginPage"));
-const RegisterPage = lazy(() => import("@/pages/AuthTemplate/RegisterPage"));
 const NotFoundPage = lazy(() => import("@/pages/HomeTemplate/NotFoundPage"));
 const AdminTemplate = lazy(() => import("@/pages/AdminTemplate"));
-const AuthTemplate = lazy(() => import("@/pages/AuthTemplate"));
 const ListRoom = lazy(() => import("@/pages/HomeTemplate/ListRoomPage"));
 const RoomDetails = lazy(() => import("@/pages/HomeTemplate/RoomDetailsPage"));
 const UserDetails = lazy(() => import("@/pages/HomeTemplate/UserDetailsPage"));
@@ -49,7 +46,7 @@ export const routes: RouteObject[] = [
         element: withSuspense(HomePage),
       },
       {
-        path: "list-rooms",
+        path: "list-rooms/:slug",
         element: withSuspense(ListRoom),
       },
       {
@@ -82,20 +79,6 @@ export const routes: RouteObject[] = [
       {
         path: "booking-room-management",
         element: withSuspense(BookingRoomManagement),
-      },
-    ],
-  },
-  {
-    path: "/auth",
-    element: withSuspense(AuthTemplate),
-    children: [
-      {
-        path: "login",
-        element: withSuspense(LoginPage),
-      },
-      {
-        path: "register",
-        element: withSuspense(RegisterPage),
       },
     ],
   },

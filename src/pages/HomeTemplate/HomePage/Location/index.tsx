@@ -8,6 +8,13 @@ export default function DefaultLocation() {
     queryKey: ["get-location-pagination"],
     queryFn: () => getListLocationPaginationApi(1, 8),
   });
+  const toSlug = (str: string): string => {
+    return str
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .replace(/\s+/g, "-");
+  };
   return (
     <section className="py-12 px-4">
       <div className="max-w-7xl mx-auto">
@@ -20,27 +27,31 @@ export default function DefaultLocation() {
             ? Array.from({ length: 8 }).map((_, index) => (
                 <LocationSkeleton key={index} />
               ))
-            : defaultLocations.map((location) => (
-                <NavLink
-                  to="experience"
-                  key={location.id}
-                  className="flex flex-col items-center text-center cursor-pointer hover:scale-105 transition-transform"
-                >
-                  <div className="w-20 h-20 rounded-xl overflow-hidden mb-3">
-                    <img
-                      src={location.hinhAnh}
-                      alt={location.tenViTri}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <h3 className="text-sm font-medium text-gray-900">
-                    {location.tinhThanh}
-                  </h3>
-                  <p className="text-xs text-gray-500">
-                    {Math.floor(Math.random() * 10) + 1} giờ lái xe
-                  </p>
-                </NavLink>
-              ))}
+            : defaultLocations.map((location) => {
+                const slug = toSlug(location.tinhThanh);
+
+                return (
+                  <NavLink
+                    to={`list-rooms/${slug}`}
+                    key={location.id}
+                    className="flex flex-col items-center text-center cursor-pointer hover:scale-105 transition-transform"
+                  >
+                    <div className="w-20 h-20 rounded-xl overflow-hidden mb-3">
+                      <img
+                        src={location.hinhAnh}
+                        alt={location.tenViTri}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <h3 className="text-sm font-medium text-gray-900">
+                      {location.tinhThanh}
+                    </h3>
+                    <p className="text-xs text-gray-500">
+                      {Math.floor(Math.random() * 10) + 1} giờ lái xe
+                    </p>
+                  </NavLink>
+                );
+              })}
         </div>
       </div>
     </section>
