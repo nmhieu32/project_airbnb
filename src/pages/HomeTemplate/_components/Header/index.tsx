@@ -5,15 +5,8 @@ import Login from "../../Login";
 import Register from "../../Register";
 
 export default function Header() {
-  // const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { setShowLogin, setShowRegister } = useModalStore();
-
-  // useEffect(() => {
-  //   const handleScroll = () => setIsScrolled(window.scrollY > 50);
-  //   window.addEventListener("scroll", handleScroll);
-  //   return () => window.removeEventListener("scroll", handleScroll);
-  // }, []);
 
   const navItems = [
     { to: "/", label: "Nơi lưu trú", icon: "🏠" },
