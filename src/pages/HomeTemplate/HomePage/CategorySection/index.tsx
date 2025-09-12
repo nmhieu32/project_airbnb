@@ -6,21 +6,28 @@ export default function CategorySection() {
       id: 1,
       name: "Toàn bộ nhà",
       image: "/images/toan-bo-nha.jpg",
+      to: "list-rooms/ho-chi-minh"
     },
     {
       id: 2,
       name: "Chỗ ở độc đáo",
       image: "/images/cho-o-doc-dao.webp",
+      to: "list-rooms/nha-trang"
+
     },
     {
       id: 3,
       name: "Trang trại và thiên nhiên",
       image: "/images/trang-trai.jfif",
+      to: "list-rooms/phu-quoc"
+
     },
     {
       id: 4,
       name: "Cho phép mang theo thú cưng",
       image: "/images/thu-cung.avif",
+      to: "list-rooms/ha-noi"
+
     },
   ];
   return (
@@ -32,7 +39,7 @@ export default function CategorySection() {
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
           {categories.map((item) => (
-            <NavLink to="bb" key={item.id} className="cursor-pointer">
+            <NavLink to={item.to} key={item.id} className="cursor-pointer">
               <div className="w-full h-60 rounded-xl overflow-hidden mb-3">
                 <img
                   src={item.image}

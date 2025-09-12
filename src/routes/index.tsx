@@ -50,7 +50,7 @@ export const routes: RouteObject[] = [
         element: withSuspense(ListRoom),
       },
       {
-        path: "room-details",
+        path: "room-details/:idRoom",
         element: withSuspense(RoomDetails),
       },
       {
