@@ -2,11 +2,19 @@ import { getListLocationPaginationApi } from "@/services/location.api";
 import { useQuery } from "@tanstack/react-query";
 import { NavLink } from "react-router-dom";
 import LocationSkeleton from "../../_components/Skeleton/location.ske";
+import { useLocationStore } from "@/store/location.store";
 
 export default function DefaultLocation() {
+  const { setLocation } = useLocationStore();
   const { data: defaultLocations = [], isLoading } = useQuery({
     queryKey: ["get-location-pagination"],
-    queryFn: () => getListLocationPaginationApi(1, 8),
+    queryFn: async () => {
+      const loc = await getListLocationPaginationApi(1, 8);
+      if (loc) {
+        setLocation(loc);
+      }
+      return loc;
+    },
   });
   const toSlug = (str: string): string => {
     return str

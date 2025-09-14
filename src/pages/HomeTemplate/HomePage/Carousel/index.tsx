@@ -38,7 +38,7 @@ export default function CarouselHome() {
         ) : (
           <Carousel plugins={[Autoplay({ delay: 3000 })]}>
             <CarouselContent>
-              {data.map((item) => (
+              {data.slice(0,3).map((item) => (
                 <CarouselItem key={item.id}>
                   <div className="relative w-full h-96 md:h-[500px]">
                     <img
