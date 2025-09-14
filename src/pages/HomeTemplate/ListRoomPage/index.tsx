@@ -6,19 +6,19 @@ import SearchBarHome from "../HomePage/SearchBar";
 import { Car, Coffee, Heart, MapPin, Wifi } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useLocationStore } from "@/store/location.store";
+import { useRoomStore } from "@/store/room.store";
+import { toSlug } from "@/utils/slug";
 
 export default function ListRoomByLocationPage() {
   const { slug } = useParams();
 
   const [favoriteRooms, setFavoriteRooms] = useState(new Set());
+  const { guests } = useLocationStore();
+  console.log("🍃 ~ ListRoomByLocationPage ~ guests:", guests);
 
-  const toSlug = (str: string): string => {
-    return str
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLowerCase()
-      .replace(/\s+/g, "-");
-  };
+  const { room, setRoom } = useRoomStore();
+  console.log("🍃 ~ ListRoomByLocationPage ~ room:", room);
 
   const { data: locations } = useQuery({
     queryKey: ["get-location"],
@@ -34,11 +34,26 @@ export default function ListRoomByLocationPage() {
 
   const findLocation = mapped?.find((loc) => toSlug(loc.tinhThanh) === slug);
 
-  const { data: rooms } = useQuery({
+  const {
+    data: rooms = [],
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["rooms", findLocation?.id],
-    queryFn: () => getListRoomByLocationApi(findLocation?.id),
-    enabled: !!findLocation,
+    queryFn: async () => {
+      const hasRoom = await getListRoomByLocationApi(findLocation?.id);
+      if (hasRoom) {
+        setRoom(hasRoom);
+      }
+      return hasRoom;
+    },
+    enabled: !!findLocation?.id,
   });
+
+  const filterdRoom = guests
+    ? rooms.filter((item) => item.khach === guests)
+    : rooms;
+  console.log("🍃 ~ ListRoomByLocationPage ~ filterdRoom:", filterdRoom);
 
   const toggleFavorite = (roomId: number) => {
     const newFavorites = new Set(favoriteRooms);
@@ -49,7 +64,8 @@ export default function ListRoomByLocationPage() {
     }
     setFavoriteRooms(newFavorites);
   };
-
+  if (isLoading) return <p>Đang tải...</p>;
+  if (isError) return <p>Có lỗi khi tải dữ liệu</p>;
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <div className="relative h-60 md:h-96 overflow-hidden">
@@ -90,7 +106,7 @@ export default function ListRoomByLocationPage() {
             </div>
 
             <div className="space-y-6">
-              {rooms?.map((room) => (
+              {filterdRoom.map((room) => (
                 <NavLink
                   key={room.id}
                   to={`/room-details/${room.id}`}
