@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import type { RoomComment } from "@/interfaces/comment.interface";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import RoomDetailSkeleton from "../_components/Skeleton/room-details.ske";
 
 export default function RoomDetailsPage() {
   const { idRoom } = useParams();
@@ -25,7 +26,7 @@ export default function RoomDetailsPage() {
     enabled: !!idRoom,
   });
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <RoomDetailSkeleton/>;
   if (isError || !room) return <p>Không tìm thấy phòng</p>;
   return (
     <div className="max-w-7xl mx-auto">
@@ -43,12 +44,22 @@ export default function RoomDetailsPage() {
         {/* Left */}
         <div className="lg:col-span-2 space-y-6">
           {/* Title */}
-          <div>
-            <h1 className="text-3xl font-bold">{room.tenPhong}</h1>
-            <p className="text-gray-600 mt-1">
-              {room.khach} khách · {room.phongNgu} phòng ngủ · {room.giuong}{" "}
-              giường · {room.phongTam} phòng tắm
-            </p>
+          {/* Title + Host avatar */}
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold">{room.tenPhong}</h1>
+              <p className="text-gray-600 mt-1">
+                {room.khach} khách · {room.phongNgu} phòng ngủ · {room.giuong}{" "}
+                giường · {room.phongTam} phòng tắm
+              </p>
+            </div>
+
+            {/* Avatar host */}
+            <img
+              src="/images/logo.svg"
+              alt="Chủ nhà"
+              className="w-12 h-12 rounded-full object-cover ring-2 ring-gray-200 ml-4"
+            />
           </div>
 
           {/* Description */}
@@ -85,8 +96,8 @@ export default function RoomDetailsPage() {
                   <div key={c.id} className="flex gap-4 border-b pb-4">
                     {/* Avatar */}
                     <img
-                      src={c.avatar === "" ? "/images/logo.svg" : c.avatar}
-                      alt={c.tenNguoiBinhLuan}
+                      src={c.avatar ? c.avatar : "/images/logo.svg"}
+                      alt={c.tenNguoiBinhLuan || "User"}
                       className="w-12 h-12 rounded-full object-cover flex-shrink-0"
                     />
                     <div className="flex-1 min-w-0">

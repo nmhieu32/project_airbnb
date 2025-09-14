@@ -3,7 +3,7 @@ import { getListRoomByLocationApi } from "@/services/room.api";
 import { useQuery } from "@tanstack/react-query";
 import { NavLink, useParams } from "react-router-dom";
 import SearchBarHome from "../HomePage/SearchBar";
-import { Car, Coffee, Heart, MapPin, Star, Wifi } from "lucide-react";
+import { Car, Coffee, Heart, MapPin, Wifi } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
@@ -208,7 +208,9 @@ export default function ListRoomByLocationPage() {
             <div className="bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-lg">
               <div className="flex items-center gap-2">
                 <MapPin className="h-5 w-5 text-blue-600" />
-                <span className="font-semibold text-gray-900">{findLocation?.tinhThanh}</span>
+                <span className="font-semibold text-gray-900">
+                  {findLocation?.tinhThanh}
+                </span>
               </div>
               <p className="text-sm text-gray-600 mt-1">
                 {rooms?.length || 0} chỗ ở có sẵn trong khu vực này
