@@ -3,16 +3,31 @@ import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import Login from "../../Login";
 import Register from "../../Register";
+import { useAuthStore } from "@/store/auth.store";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { setShowLogin, setShowRegister } = useModalStore();
+  const { user, clearUser } = useAuthStore();
 
   const navItems = [
     { to: "/", label: "Nơi lưu trú", icon: "🏠" },
     { to: "/experience", label: "Trải nghiệm", icon: "🎈" },
     { to: "/service", label: "Dịch vụ", icon: "🎁" },
   ];
+
+  const handleLogout = () => {
+    clearUser();
+  };
 
   return (
     <>
@@ -48,45 +63,84 @@ export default function Header() {
               </div>
             </div>
 
+            
             <nav className="hidden md:flex space-x-8">
               {navItems.map((item) => (
                 <NavLink
                   key={item.to}
                   to={item.to}
                   className={({ isActive }) =>
-                    `text-gray-700 hover:text-purple-600 transition-colors font-medium ${
+                    `flex items-center space-x-1 text-gray-700 hover:text-purple-600 transition-colors font-medium ${
                       isActive ? "my-active" : ""
                     }`
                   }
                 >
                   <span>{item.icon}</span>
-                  {item.label}
+                  <span>{item.label}</span>
                 </NavLink>
               ))}
             </nav>
+            
+            {user ? (
+              <div className="hidden md:flex items-center space-x-4 ml-4">
+                <span className="text-gray-700 font-medium">
+                  Chào, <b>{user.user.name}</b>
+                </span>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="focus:outline-none">
+                      <Avatar className="w-10 h-10 border-2 border-purple-600">
+                        <AvatarImage
+                          src={user.user.avatar}
+                          alt={user.user.name}
+                        />
+                        <AvatarFallback>
+                          {user.user.name?.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuLabel>
+                      <NavLink to="user-details" className="font-semibold hover:text-purple-600">
+                        Thông tin người dùng
+                      </NavLink>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={handleLogout}
+                      className="text-red-600 cursor-pointer hover:text-red-700!"
+                    >
+                      Đăng xuất
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            ) : (
+              <div className="hidden md:flex items-center space-x-4">
+                <button
+                  onClick={() => setShowLogin(true)}
+                  className="text-gray-700 hover:text-purple-600 font-medium transition"
+                >
+                  Đăng nhập
+                </button>
+                <button
+                  onClick={() => setShowRegister(true)}
+                  className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-2 rounded-full hover:shadow-lg transition transform hover:scale-105"
+                >
+                  Đăng ký
+                </button>
+              </div>
+            )}
 
-            <div className="hidden md:flex items-center space-x-4">
-              <button
-                onClick={() => setShowLogin(true)}
-                className="text-gray-700 hover:text-purple-600 font-medium transition-colors cursor-pointer"
-              >
-                Đăng nhập
-              </button>
-              <button
-                onClick={() => setShowRegister(true)}
-                className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-2 rounded-full hover:shadow-lg transition-all duration-300 transform hover:scale-105 cursor-pointer"
-              >
-                Đăng ký
-              </button>
-            </div>
-
+            
             <button
-              className="md:hidden"
+              className="md:hidden flex flex-col justify-center items-center"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
-              <div className="w-6 h-0.5 bg-gray-600 mb-1"></div>
-              <div className="w-6 h-0.5 bg-gray-600 mb-1"></div>
-              <div className="w-6 h-0.5 bg-gray-600"></div>
+              <span className="w-6 h-0.5 bg-gray-600 mb-1"></span>
+              <span className="w-6 h-0.5 bg-gray-600 mb-1"></span>
+              <span className="w-6 h-0.5 bg-gray-600"></span>
             </button>
           </div>
 
@@ -107,20 +161,38 @@ export default function Header() {
                     {item.icon} {item.label}
                   </NavLink>
                 ))}
-                <div className="flex space-x-4 pt-4 border-t">
-                  <button
-                    className="text-gray-700 font-medium"
-                    onClick={() => setShowLogin(true)}
-                  >
-                    Đăng nhập
-                  </button>
-                  <button
-                    className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-full"
-                    onClick={() => setShowRegister(true)}
-                  >
-                    Đăng ký
-                  </button>
-                </div>
+
+                {user ? (
+                  <div className="flex flex-col items-center ml-4">
+                    <NavLink
+                      to="user-details"
+                      className="text-gray-700 font-medium"
+                    >
+                      Chào, {user.user.name}
+                    </NavLink>
+                    <button
+                      className="text-red-500 cursor-pointer"
+                      onClick={handleLogout}
+                    >
+                      Đăng xuất
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex space-x-4 pt-4 border-t">
+                    <button
+                      className="text-gray-700 font-medium"
+                      onClick={() => setShowLogin(true)}
+                    >
+                      Đăng nhập
+                    </button>
+                    <button
+                      className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-full"
+                      onClick={() => setShowRegister(true)}
+                    >
+                      Đăng ký
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           )}

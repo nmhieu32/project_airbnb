@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { NavLink } from "react-router-dom";
 import LocationSkeleton from "../../_components/Skeleton/location.ske";
 import { useLocationStore } from "@/store/location.store";
+import { toSlug } from "@/utils/slug";
 
 export default function DefaultLocation() {
   const { setLocation } = useLocationStore();
@@ -16,13 +17,7 @@ export default function DefaultLocation() {
       return loc;
     },
   });
-  const toSlug = (str: string): string => {
-    return str
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLowerCase()
-      .replace(/\s+/g, "-");
-  };
+  
   return (
     <section className="py-12 px-4">
       <div className="max-w-7xl mx-auto">
