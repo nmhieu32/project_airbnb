@@ -1,6 +1,6 @@
 import { getListLocationApi } from "@/services/location.api";
 import { getListRoomByLocationApi } from "@/services/room.api";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { NavLink, useParams } from "react-router-dom";
 import SearchBarHome from "../HomePage/SearchBar";
 import { Car, Coffee, Heart, MapPin, Wifi } from "lucide-react";
@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useLocationStore } from "@/store/location.store";
 import { useRoomStore } from "@/store/room.store";
 import { toSlug } from "@/utils/slug";
+import ListRoomsSkeleton from "../_components/Skeleton/list-rooms.ske";
 
 export default function ListRoomByLocationPage() {
   const { slug } = useParams();
@@ -48,12 +49,12 @@ export default function ListRoomByLocationPage() {
       return hasRoom;
     },
     enabled: !!findLocation?.id,
+    placeholderData: keepPreviousData,
   });
 
-  const filterdRoom = guests
+  const filteredRoom = guests
     ? rooms.filter((item) => item.khach === guests)
     : rooms;
-  console.log("🍃 ~ ListRoomByLocationPage ~ filterdRoom:", filterdRoom);
 
   const toggleFavorite = (roomId: number) => {
     const newFavorites = new Set(favoriteRooms);
@@ -64,7 +65,7 @@ export default function ListRoomByLocationPage() {
     }
     setFavoriteRooms(newFavorites);
   };
-  if (isLoading) return <p>Đang tải...</p>;
+  if (isLoading) return <ListRoomsSkeleton/>;
   if (isError) return <p>Có lỗi khi tải dữ liệu</p>;
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
@@ -98,7 +99,7 @@ export default function ListRoomByLocationPage() {
               </h2>
               <div className="flex items-center gap-2 text-gray-600">
                 <span className="text-lg font-semibold text-blue-600">
-                  Hơn {rooms?.length || 0} chỗ ở
+                  Có {filteredRoom?.length || 0} chỗ ở
                 </span>
                 <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
                 <span>1 tháng</span>
@@ -106,7 +107,7 @@ export default function ListRoomByLocationPage() {
             </div>
 
             <div className="space-y-6">
-              {filterdRoom.map((room) => (
+              {filteredRoom.map((room) => (
                 <NavLink
                   key={room.id}
                   to={`/room-details/${room.id}`}
@@ -229,7 +230,7 @@ export default function ListRoomByLocationPage() {
                 </span>
               </div>
               <p className="text-sm text-gray-600 mt-1">
-                {rooms?.length || 0} chỗ ở có sẵn trong khu vực này
+                {filteredRoom?.length || 0} chỗ ở có sẵn trong khu vực này
               </p>
             </div>
           </div>

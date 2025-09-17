@@ -1,4 +1,5 @@
 import { useLocationStore } from "@/store/location.store";
+import { toSlug } from "@/utils/slug";
 import { Calendar, MapPin, Search, Users } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -9,21 +10,12 @@ export default function SearchBarHome() {
     useLocationStore();
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
-  // const [guests, setGuests] = useState("1");
   const navigate = useNavigate();
-  const toSlug = (str: string): string => {
-    return str
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLowerCase()
-      .replace(/\s+/g, "-");
-  };
 
-  const handleSearch = async() => {
+  const handleSearch = () => {
     if (locationSelect === "") {
       return toast.warning("Vui lòng chọn Địa điểm đến !");
     }
-    
     navigate(`/list-rooms/${locationSelect}`);
   };
   return (
@@ -100,7 +92,7 @@ export default function SearchBarHome() {
                     onChange={(e) => setGuests(Number(e.target.value))}
                     className="w-full text-sm text-gray-500 bg-transparent border-none focus:outline-none"
                   >
-                    <option value="1">Thêm khách</option>
+                    <option value="">Thêm khách</option>
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((num) => (
                       <option key={num} value={num}>
                         {num} khách
