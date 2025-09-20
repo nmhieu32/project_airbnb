@@ -88,7 +88,7 @@ export default function Header() {
                 </span>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="focus:outline-none">
+                    <button className="focus:outline-none cursor-pointer">
                       <Avatar className="w-10 h-10 border-2 border-purple-600">
                         <AvatarImage
                           src={user.user.avatar}
@@ -120,13 +120,13 @@ export default function Header() {
               <div className="hidden md:flex items-center space-x-4">
                 <button
                   onClick={() => setShowLogin(true)}
-                  className="text-gray-700 hover:text-purple-600 font-medium transition"
+                  className="text-gray-700 hover:text-purple-600 font-medium transition cursor-pointer"
                 >
                   Đăng nhập
                 </button>
                 <button
                   onClick={() => setShowRegister(true)}
-                  className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-2 rounded-full hover:shadow-lg transition transform hover:scale-105"
+                  className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-2 rounded-full hover:shadow-lg transition transform hover:scale-105 cursor-pointer"
                 >
                   Đăng ký
                 </button>
