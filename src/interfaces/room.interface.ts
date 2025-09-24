@@ -19,3 +19,12 @@ export interface Room {
     maViTri:  number;
     hinhAnh:  string;
 }
+
+export interface BookRoom {
+    id:           number;
+    maPhong:      number;
+    ngayDen:      string;
+    ngayDi:       string;
+    soLuongKhach: number;
+    maNguoiDung:  number;
+}
