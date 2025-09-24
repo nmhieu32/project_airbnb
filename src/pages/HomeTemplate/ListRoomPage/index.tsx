@@ -16,10 +16,8 @@ export default function ListRoomByLocationPage() {
 
   const [favoriteRooms, setFavoriteRooms] = useState(new Set());
   const { guests } = useLocationStore();
-  console.log("🍃 ~ ListRoomByLocationPage ~ guests:", guests);
 
-  const { room, setRoom } = useRoomStore();
-  console.log("🍃 ~ ListRoomByLocationPage ~ room:", room);
+  const { setRoom } = useRoomStore();
 
   const { data: locations } = useQuery({
     queryKey: ["get-location"],

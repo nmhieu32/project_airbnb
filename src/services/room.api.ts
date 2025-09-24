@@ -1,4 +1,4 @@
-import type { Room } from "@/interfaces/room.interface";
+import type { BookRoom, Room } from "@/interfaces/room.interface";
 import { api } from "./api";
 import type { BaseApiResponse } from "@/interfaces/base.interface";
 
@@ -25,5 +25,17 @@ export const getRoomDetailsApi = async (
     return response.data.content;
   } catch (error) {
     console.log("🍃 ~ getRoomDetailsApi ~ error:", error);
+  }
+};
+
+export const bookRoomApi = async (data: BookRoom) => {
+  try {
+    const response = await api.post<BaseApiResponse<BookRoom>>(
+      "dat-phong",
+      data
+    );
+    return response.data.content;
+  } catch (error) {
+    throw error;
   }
 };

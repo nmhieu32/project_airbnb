@@ -241,7 +241,7 @@ export default function Login() {
               {/* Close button */}
               <button
                 onClick={() => setShowLogin(false)}
-                className="absolute top-6 right-6 w-8 h-8 bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-700 rounded-full flex items-center justify-center transition-all duration-200 transform hover:scale-110 active:scale-95"
+                className="absolute top-6 right-6 w-8 h-8 bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-700 rounded-full flex items-center justify-center transition-all duration-200 transform hover:scale-110 active:scale-95 cursor-pointer"
               >
                 <svg
                   className="w-4 h-4"

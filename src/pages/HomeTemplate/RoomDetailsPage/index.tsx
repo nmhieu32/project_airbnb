@@ -2,14 +2,39 @@ import { getCommentByIdRoomApi } from "@/services/comment.api";
 import { getRoomDetailsApi } from "@/services/room.api";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { format } from "date-fns";
+import { addDays, differenceInDays, format } from "date-fns";
 import type { RoomComment } from "@/interfaces/comment.interface";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import RoomDetailSkeleton from "../_components/Skeleton/room-details.ske";
+import { AlertCircleIcon, Minus, Plus } from "lucide-react";
+import { useState } from "react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Alert, AlertTitle } from "@/components/ui/alert";
+import { useAuthStore } from "@/store/auth.store";
 
 export default function RoomDetailsPage() {
   const { idRoom } = useParams();
+  const { user } = useAuthStore();
+  const [guest, setGuest] = useState(1);
+  const [checkIn, setCheckIn] = useState<Date | undefined>();
+  const [checkOut, setCheckOut] = useState<Date | undefined>();
   const {
     data: room,
     isLoading,
@@ -26,7 +51,27 @@ export default function RoomDetailsPage() {
     enabled: !!idRoom,
   });
 
-  if (isLoading) return <RoomDetailSkeleton/>;
+  const handleGuestChange = (g: number, incre: boolean) => {
+    if (incre && guest < g) {
+      setGuest(guest + 1);
+    } else if (!incre && guest >= 1) {
+      setGuest(guest - 1);
+    }
+  };
+
+  const calculateNights = () => {
+    if (checkIn && checkOut) {
+      const start = new Date(checkIn);
+      const end = new Date(checkOut);
+      const diffTime = differenceInDays(end, start);
+      return diffTime;
+    }
+    return 0;
+  };
+
+  const nights = calculateNights();
+
+  if (isLoading) return <RoomDetailSkeleton />;
   if (isError || !room) return <p>Không tìm thấy phòng</p>;
   return (
     <div className="max-w-7xl mx-auto">
@@ -124,16 +169,25 @@ export default function RoomDetailsPage() {
             </div>
 
             {/* Comment input */}
-            <div className="mt-6">
-              <Textarea
-                placeholder="Viết bình luận..."
-                className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-pink-400"
-                rows={3}
-              />
-              <Button className="mt-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-lg hover:bg-pink-600 cursor-pointer">
-                Gửi bình luận
-              </Button>
-            </div>
+            {user ? (
+              <>
+                <div className="mt-6">
+                  <Textarea
+                    placeholder="Viết bình luận..."
+                    className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-pink-400"
+                    rows={3}
+                  />
+                  <Button className="mt-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-lg hover:bg-pink-600 cursor-pointer">
+                    Gửi bình luận
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <Alert className="bg-amber-50 border border-amber-200">
+                <AlertCircleIcon />
+                <AlertTitle>Cần đăng nhập để bình luận</AlertTitle>
+              </Alert>
+            )}
           </div>
         </div>
 
@@ -149,26 +203,154 @@ export default function RoomDetailsPage() {
 
             {/* Form check in/out */}
             <div className="grid grid-cols-2 border rounded-lg divide-x">
-              <div className="p-3">
-                <p className="text-xs font-semibold uppercase">Nhận phòng</p>
-                <p className="text-sm text-gray-600">Thêm ngày</p>
-              </div>
-              <div className="p-3">
-                <p className="text-xs font-semibold uppercase">Trả phòng</p>
-                <p className="text-sm text-gray-600">Thêm ngày</p>
-              </div>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <div className="p-3 cursor-pointer hover:bg-gray-50">
+                    <p className="text-xs font-semibold uppercase">
+                      Nhận phòng
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      {checkIn ? format(checkIn, "dd/MM/yyyyy") : "Chọn ngày"}
+                    </p>
+                  </div>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={checkIn}
+                    onSelect={setCheckIn}
+                    disabled={(date) => (checkOut ? date > checkOut : false)}
+                  />
+                </PopoverContent>
+              </Popover>
+
+              {/* Check-out */}
+              <Popover>
+                <PopoverTrigger asChild>
+                  <div className="p-3 cursor-pointer hover:bg-gray-50">
+                    <p className="text-xs font-semibold uppercase">Trả phòng</p>
+                    <p className="text-sm text-gray-600">
+                      {checkOut ? format(checkOut, "dd/MM/yyyyy") : "Chọn ngày"}
+                    </p>
+                  </div>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={checkOut}
+                    onSelect={setCheckOut}
+                    disabled={(date) =>
+                      checkIn ? date < addDays(checkIn, 1) : false
+                    }
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
 
             {/* Guests */}
-            <div className="border rounded-lg p-3">
-              <p className="text-xs font-semibold uppercase">Khách</p>
-              <p className="text-sm text-gray-600">1 khách</p>
+            <div className="border rounded-xl p-4 bg-gray-50 hover:bg-gray-100 transition-colors">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-semibold uppercase text-gray-700">
+                    Khách
+                  </p>
+                  <p className="text-sm text-gray-900 font-medium">
+                    {guest} {guest === 1 ? "khách" : "khách"}
+                  </p>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <button
+                    onClick={() => handleGuestChange(room.khach, false)}
+                    disabled={guest <= 1}
+                    className="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <Minus className="w-4 h-4 text-gray-600" />
+                  </button>
+                  <span className="min-w-[2rem] text-center font-semibold text-gray-900">
+                    {guest}
+                  </span>
+                  <button
+                    onClick={() => handleGuestChange(room.khach, true)}
+                    disabled={guest >= room.khach}
+                    className="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <Plus className="w-4 h-4 text-gray-600" />
+                  </button>
+                </div>
+              </div>
             </div>
 
+            {nights > 0 && (
+              <div className="space-y-3 py-4 border-t border-b">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">
+                    ${room.giaTien} x {nights} {nights === 1 ? "đêm" : "đêm"}
+                  </span>
+                  <span className="font-medium">${room.giaTien * nights}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Phí dịch vụ</span>
+                  <span className="font-medium">$15</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Thuế</span>
+                  <span className="font-medium">
+                    ${Math.round(nights * room.giaTien * 0.1)}
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Tổng tiền */}
+            {nights > 0 && (
+              <div className="flex justify-between items-center py-2">
+                <span className="text-lg font-bold text-gray-900">
+                  Tổng cộng
+                </span>
+                <span className="text-xl font-bold text-purple-600">
+                  $
+                  {nights * room.giaTien +
+                    15 +
+                    Math.round(nights * room.giaTien * 0.1)}
+                </span>
+              </div>
+            )}
+
             {/* Button */}
-            <Button className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-lg font-semibold hover:opacity-90 transition cursor-pointer">
-              Đặt phòng
-            </Button>
+
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <button
+                  disabled={!checkIn || !checkOut}
+                  className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-4 px-6 rounded-xl font-semibold text-lg hover:from-purple-700 hover:to-blue-700 transform hover:scale-[1.02] transition-all duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none cursor-pointer"
+                >
+                  {checkIn && checkOut
+                    ? "Đặt phòng ngay"
+                    : "Chọn ngày để đặt phòng"}
+                </button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    Bạn có chắc chắn đặt phòng không ?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Xác nhận nếu bạn muốn đặt phòng
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel className="cursor-pointer">
+                    Hủy
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    className="bg-gradient-to-r from-purple-600 to-blue-600 text-white cursor-pointer"
+                    onClick={() => console.log("sdasdas")}
+                  >
+                    Đặt phòng
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
 
             {/* Note */}
             <p className="text-center text-gray-500 text-sm">
