@@ -1,9 +1,14 @@
-import { getCommentByIdRoomApi } from "@/services/comment.api";
-import { getRoomDetailsApi } from "@/services/room.api";
-import { useQuery } from "@tanstack/react-query";
+import { getCommentByIdRoomApi, postCommentApi } from "@/services/comment.api";
+import { bookRoomApi, getRoomDetailsApi } from "@/services/room.api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { addDays, differenceInDays, format } from "date-fns";
-import type { RoomComment } from "@/interfaces/comment.interface";
+import {
+  addDays,
+  differenceInDays,
+  format,
+  formatDistanceToNow,
+} from "date-fns";
+import type { PostComment, RoomComment } from "@/interfaces/comment.interface";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import RoomDetailSkeleton from "../_components/Skeleton/room-details.ske";
@@ -28,6 +33,10 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { useAuthStore } from "@/store/auth.store";
+import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import type { BookRoom } from "@/interfaces/room.interface";
+import { vi } from "date-fns/locale";
 
 export default function RoomDetailsPage() {
   const { idRoom } = useParams();
@@ -35,6 +44,8 @@ export default function RoomDetailsPage() {
   const [guest, setGuest] = useState(1);
   const [checkIn, setCheckIn] = useState<Date | undefined>();
   const [checkOut, setCheckOut] = useState<Date | undefined>();
+  const [rating, setRating] = useState(0);
+  const queryClient = useQueryClient();
   const {
     data: room,
     isLoading,
@@ -50,6 +61,75 @@ export default function RoomDetailsPage() {
       getCommentByIdRoomApi(Number(idRoom)),
     enabled: !!idRoom,
   });
+
+  const { mutate: handleBooking } = useMutation({
+    mutationFn: (data: BookRoom) => bookRoomApi(data),
+    onSuccess: () => {
+      toast.success("Đặt phòng thành công");
+
+      setCheckIn(undefined);
+      setCheckOut(undefined);
+    },
+    onError: (error) => {
+      console.log("🌿 ~ RoomDetailsPage ~ error:", error);
+      toast.error("Đặt phòng thất bại");
+    },
+  });
+
+  const { handleSubmit, setValue } = useForm<BookRoom>({
+    defaultValues: {
+      id: 0,
+      maPhong: Number(idRoom),
+      ngayDen: "",
+      ngayDi: "",
+      soLuongKhach: 0,
+      maNguoiDung: user?.user.id,
+    },
+  });
+
+  const onSubmit = (data: BookRoom) => {
+    if (!user) {
+      return toast.warning("Vui lòng đăng nhập để đặt phòng");
+    }
+    handleBooking({ ...data, soLuongKhach: guest });
+  };
+
+  const { mutate: handlePostComment } = useMutation({
+    mutationFn: (data: PostComment) => postCommentApi(data),
+    onSuccess: () => {
+      toast.success("Bình luận thành công");
+      resetComment();
+      setRating(0);
+      queryClient.invalidateQueries({ queryKey: ["comment", idRoom] });
+    },
+    onError: (error) => {
+      console.log("❌ Lỗi comment:", error);
+      toast.error("Gửi bình luận thất bại");
+    },
+  });
+
+  const {
+    register,
+    handleSubmit: handleSubmitComment,
+    reset: resetComment,
+  } = useForm<PostComment>({
+    defaultValues: {
+      id: 0,
+      maPhong: Number(idRoom),
+      maNguoiBinhLuan: user?.user.id,
+      ngayBinhLuan: "",
+      noiDung: "",
+      saoBinhLuan: rating,
+    },
+  });
+
+  const onSubmitComment = (comment: PostComment) => {
+    handlePostComment({
+      ...comment,
+      saoBinhLuan: rating,
+      ngayBinhLuan: new Date().toISOString(),
+    });
+  };
 
   const handleGuestChange = (g: number, incre: boolean) => {
     if (incre && guest < g) {
@@ -137,34 +217,45 @@ export default function RoomDetailsPage() {
               {comment.length === 0 ? (
                 <p className="text-gray-500">Chưa có bình luận nào</p>
               ) : (
-                comment.map((c) => (
-                  <div key={c.id} className="flex gap-4 border-b pb-4">
-                    {/* Avatar */}
-                    <img
-                      src={c.avatar ? c.avatar : "/images/logo.svg"}
-                      alt={c.tenNguoiBinhLuan || "User"}
-                      className="w-12 h-12 rounded-full object-cover flex-shrink-0"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <h3 className="font-semibold">{c.tenNguoiBinhLuan}</h3>
-                        <span className="text-sm text-gray-500">
-                          {c.ngayBinhLuan &&
-                          !isNaN(new Date(c.ngayBinhLuan).getTime())
-                            ? format(new Date(c.ngayBinhLuan), "dd/MM/yyyy")
-                            : ""}
-                        </span>
+                [...comment]
+                  .sort(
+                    (a, b) =>
+                      new Date(b.ngayBinhLuan).getTime() -
+                      new Date(a.ngayBinhLuan).getTime()
+                  )
+                  .map((c) => (
+                    <div key={c.id} className="flex gap-4 border-b pb-4">
+                      {/* Avatar */}
+                      <img
+                        src={c.avatar ? c.avatar : "/images/logo.svg"}
+                        alt={c.tenNguoiBinhLuan || "User"}
+                        className="w-12 h-12 rounded-full object-cover flex-shrink-0"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <h3 className="font-semibold">
+                            {c.tenNguoiBinhLuan}
+                          </h3>
+                          <span className="text-sm text-gray-500">
+                            {c.ngayBinhLuan &&
+                            !isNaN(new Date(c.ngayBinhLuan).getTime())
+                              ? formatDistanceToNow(new Date(c.ngayBinhLuan), {
+                                  addSuffix: true,
+                                  locale: vi,
+                                })
+                              : ""}
+                          </span>
+                        </div>
+                        {/* Stars */}
+                        <div className="flex text-yellow-500 text-sm mb-1">
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <span key={i}>{i < c.saoBinhLuan ? "★" : "☆"}</span>
+                          ))}
+                        </div>
+                        <p className="text-gray-700 break-words">{c.noiDung}</p>
                       </div>
-                      {/* Stars */}
-                      <div className="flex text-yellow-500 text-sm mb-1">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <span key={i}>{i < c.saoBinhLuan ? "★" : "☆"}</span>
-                        ))}
-                      </div>
-                      <p className="text-gray-700 break-words">{c.noiDung}</p>
                     </div>
-                  </div>
-                ))
+                  ))
               )}
             </div>
 
@@ -172,12 +263,29 @@ export default function RoomDetailsPage() {
             {user ? (
               <>
                 <div className="mt-6">
+                  <div className="flex gap-1 mb-3">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <span
+                        key={i}
+                        onClick={() => setRating(i + 1)}
+                        className={`cursor-pointer text-2xl ${
+                          i < rating ? "text-yellow-500" : "text-gray-300"
+                        }`}
+                      >
+                        ★
+                      </span>
+                    ))}
+                  </div>
                   <Textarea
                     placeholder="Viết bình luận..."
                     className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-pink-400"
                     rows={3}
+                    {...register("noiDung")}
                   />
-                  <Button className="mt-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-lg hover:bg-pink-600 cursor-pointer">
+                  <Button
+                    onClick={handleSubmitComment(onSubmitComment)}
+                    className="mt-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-lg hover:bg-pink-600 cursor-pointer"
+                  >
                     Gửi bình luận
                   </Button>
                 </div>
@@ -218,7 +326,13 @@ export default function RoomDetailsPage() {
                   <Calendar
                     mode="single"
                     selected={checkIn}
-                    onSelect={setCheckIn}
+                    onSelect={(date) => {
+                      setCheckIn(date);
+                      setValue(
+                        "ngayDen",
+                        date ? format(date, "MM/dd/yyyy") : ""
+                      );
+                    }}
                     disabled={(date) => (checkOut ? date > checkOut : false)}
                   />
                 </PopoverContent>
@@ -238,7 +352,13 @@ export default function RoomDetailsPage() {
                   <Calendar
                     mode="single"
                     selected={checkOut}
-                    onSelect={setCheckOut}
+                    onSelect={(date) => {
+                      setCheckOut(date);
+                      setValue(
+                        "ngayDi",
+                        date ? format(date, "MM/dd/yyyy") : ""
+                      );
+                    }}
                     disabled={(date) =>
                       checkIn ? date < addDays(checkIn, 1) : false
                     }
@@ -342,11 +462,13 @@ export default function RoomDetailsPage() {
                   <AlertDialogCancel className="cursor-pointer">
                     Hủy
                   </AlertDialogCancel>
-                  <AlertDialogAction
-                    className="bg-gradient-to-r from-purple-600 to-blue-600 text-white cursor-pointer"
-                    onClick={() => console.log("sdasdas")}
-                  >
-                    Đặt phòng
+                  <AlertDialogAction asChild>
+                    <Button
+                      className="bg-gradient-to-r from-purple-600 to-blue-600 text-white cursor-pointer"
+                      onClick={() => handleSubmit(onSubmit)()}
+                    >
+                      Đặt phòng
+                    </Button>
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
