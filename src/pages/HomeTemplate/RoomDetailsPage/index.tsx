@@ -37,13 +37,15 @@ import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import type { BookRoom } from "@/interfaces/room.interface";
 import { vi } from "date-fns/locale";
+import { useLocationStore } from "@/store/location.store";
 
 export default function RoomDetailsPage() {
   const { idRoom } = useParams();
   const { user } = useAuthStore();
+  const { checkIn, checkOut, setCheckIn, setCheckOut } = useLocationStore();
   const [guest, setGuest] = useState(1);
-  const [checkIn, setCheckIn] = useState<Date | undefined>();
-  const [checkOut, setCheckOut] = useState<Date | undefined>();
+  // const [checkIn, setCheckIn] = useState<Date | undefined>();
+  // const [checkOut, setCheckOut] = useState<Date | undefined>();
   const [rating, setRating] = useState(0);
   const queryClient = useQueryClient();
   const {
@@ -80,7 +82,7 @@ export default function RoomDetailsPage() {
     defaultValues: {
       id: 0,
       maPhong: Number(idRoom),
-      ngayDen: "",
+      ngayDen: checkIn ? format(checkIn, "MM/dd/yyyy") : "",
       ngayDi: "",
       soLuongKhach: 0,
       maNguoiDung: user?.user.id,
@@ -328,6 +330,7 @@ export default function RoomDetailsPage() {
                     selected={checkIn}
                     onSelect={(date) => {
                       setCheckIn(date);
+
                       setValue(
                         "ngayDen",
                         date ? format(date, "MM/dd/yyyy") : ""
@@ -344,7 +347,7 @@ export default function RoomDetailsPage() {
                   <div className="p-3 cursor-pointer hover:bg-gray-50">
                     <p className="text-xs font-semibold uppercase">Trả phòng</p>
                     <p className="text-sm text-gray-600">
-                      {checkOut ? format(checkOut, "dd/MM/yyyyy") : "Chọn ngày"}
+                      {checkOut ? format(checkOut, "dd/MM/yyyy") : "Chọn ngày"}
                     </p>
                   </div>
                 </PopoverTrigger>

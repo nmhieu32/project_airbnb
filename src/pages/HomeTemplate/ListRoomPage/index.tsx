@@ -1,54 +1,20 @@
-import { getListLocationApi } from "@/services/location.api";
-import { getListRoomByLocationApi } from "@/services/room.api";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { NavLink, useParams } from "react-router-dom";
 import SearchBarHome from "../HomePage/SearchBar";
 import { Car, Coffee, Heart, MapPin, Wifi } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useLocationStore } from "@/store/location.store";
-import { useRoomStore } from "@/store/room.store";
-import { toSlug } from "@/utils/slug";
 import ListRoomsSkeleton from "../_components/Skeleton/list-rooms.ske";
+import { format } from "date-fns";
+import useLocationRoom from "@/utils/useLocationRoom";
 
 export default function ListRoomByLocationPage() {
   const { slug } = useParams();
 
   const [favoriteRooms, setFavoriteRooms] = useState(new Set());
-  const { guests } = useLocationStore();
+  const { guests, checkIn, checkOut } = useLocationStore();
 
-  const { setRoom } = useRoomStore();
-
-  const { data: locations } = useQuery({
-    queryKey: ["get-location"],
-    queryFn: () => getListLocationApi(),
-  });
-
-  const mapped = locations?.map((loc) => {
-    return {
-      ...loc,
-      slug: toSlug(loc.tinhThanh),
-    };
-  });
-
-  const findLocation = mapped?.find((loc) => toSlug(loc.tinhThanh) === slug);
-
-  const {
-    data: rooms = [],
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["rooms", findLocation?.id],
-    queryFn: async () => {
-      const hasRoom = await getListRoomByLocationApi(findLocation?.id);
-      if (hasRoom) {
-        setRoom(hasRoom);
-      }
-      return hasRoom;
-    },
-    enabled: !!findLocation?.id,
-    placeholderData: keepPreviousData,
-  });
+  const { rooms, isLoading, isError, findLocation } = useLocationRoom(slug);
 
   const filteredRoom = guests
     ? rooms.filter((item) => item.khach === guests)
@@ -63,7 +29,7 @@ export default function ListRoomByLocationPage() {
     }
     setFavoriteRooms(newFavorites);
   };
-  if (isLoading) return <ListRoomsSkeleton/>;
+  if (isLoading) return <ListRoomsSkeleton />;
   if (isError) return <p>Có lỗi khi tải dữ liệu</p>;
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
@@ -99,8 +65,9 @@ export default function ListRoomByLocationPage() {
                 <span className="text-lg font-semibold text-blue-600">
                   Có {filteredRoom?.length || 0} chỗ ở
                 </span>
+                <span>{checkIn ? format(checkIn, "dd/MM/yyyy") : ""}</span>
                 <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
-                <span>1 tháng</span>
+                <span>{checkOut ? format(checkOut, "dd/MM/yyyy") : ""}</span>
               </div>
             </div>
 
@@ -114,7 +81,7 @@ export default function ListRoomByLocationPage() {
                   <div className="flex gap-6 p-6">
                     <div className="relative w-48 h-36 flex-shrink-0 overflow-hidden rounded-xl">
                       <img
-                        src={room.hinhAnh}
+                        src={room.hinhAnh ? room.hinhAnh : "/images/logo.svg"}
                         alt={room.tenPhong}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       />
