@@ -29,6 +29,7 @@ export default function Header() {
     clearUser();
   };
 
+
   return (
     <>
       <header className="bg-white shadow-sm sticky top-0 z-50">
@@ -63,7 +64,6 @@ export default function Header() {
               </div>
             </div>
 
-            
             <nav className="hidden md:flex space-x-8">
               {navItems.map((item) => (
                 <NavLink
@@ -80,29 +80,32 @@ export default function Header() {
                 </NavLink>
               ))}
             </nav>
-            
+
             {user ? (
               <div className="hidden md:flex items-center space-x-4 ml-4">
                 <span className="text-gray-700 font-medium">
-                  Chào, <b>{user.user.name}</b>
+                  Chào, <b>{user.user?.name}</b>
                 </span>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <button className="focus:outline-none cursor-pointer">
                       <Avatar className="w-10 h-10 border-2 border-purple-600">
                         <AvatarImage
-                          src={user.user.avatar}
-                          alt={user.user.name}
+                          src={user.user?.avatar}
+                          alt={user.user?.name}
                         />
                         <AvatarFallback>
-                          {user.user.name?.charAt(0).toUpperCase()}
+                          {user.user?.name?.charAt(0).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-56">
                     <DropdownMenuLabel>
-                      <NavLink to="user-details" className="font-semibold hover:text-purple-600">
+                      <NavLink
+                        to="user-details"
+                        className="font-semibold hover:text-purple-600"
+                      >
                         Thông tin người dùng
                       </NavLink>
                     </DropdownMenuLabel>
@@ -133,7 +136,6 @@ export default function Header() {
               </div>
             )}
 
-            
             <button
               className="md:hidden flex flex-col justify-center items-center"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

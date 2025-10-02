@@ -39,3 +39,14 @@ export const bookRoomApi = async (data: BookRoom) => {
     throw error;
   }
 };
+
+export const getRoomByUserApi = async (idUser: number) => {
+  try {
+    const response = await api.get<BaseApiResponse<BookRoom[]>>(
+      `dat-phong/lay-theo-nguoi-dung/${idUser}`
+    );
+    return response.data.content;
+  } catch (error) {
+    console.log("🌿 ~ getRoomByUserApi ~ error:", error);
+  }
+};
