@@ -50,3 +50,12 @@ export const getRoomByUserApi = async (idUser: number) => {
     console.log("🌿 ~ getRoomByUserApi ~ error:", error);
   }
 };
+
+export const getBookRoomApi = async () => {
+  try {
+    const response = await api.get<BaseApiResponse<BookRoom[]>>("dat-phong");
+    return response.data.content;
+  } catch (error) {
+    console.log("🌿 ~ getBookRoomApi ~ error:", error);
+  }
+};
