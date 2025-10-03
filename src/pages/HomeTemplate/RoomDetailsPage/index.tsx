@@ -1,19 +1,24 @@
 import { getCommentByIdRoomApi, postCommentApi } from "@/services/comment.api";
-import { bookRoomApi, getRoomDetailsApi } from "@/services/room.api";
+import {
+  bookRoomApi,
+  getBookRoomApi,
+  getRoomDetailsApi,
+} from "@/services/room.api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import {
-  addDays,
   differenceInDays,
+  eachDayOfInterval,
   format,
   formatDistanceToNow,
+  parseISO,
 } from "date-fns";
 import type { PostComment, RoomComment } from "@/interfaces/comment.interface";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import RoomDetailSkeleton from "../_components/Skeleton/room-details.ske";
 import { AlertCircleIcon, Minus, Plus } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Popover,
   PopoverContent,
@@ -44,10 +49,15 @@ export default function RoomDetailsPage() {
   const { user } = useAuthStore();
   const { checkIn, checkOut, setCheckIn, setCheckOut } = useLocationStore();
   const [guest, setGuest] = useState(1);
-  // const [checkIn, setCheckIn] = useState<Date | undefined>();
-  // const [checkOut, setCheckOut] = useState<Date | undefined>();
   const [rating, setRating] = useState(0);
+  const [disabledDates, setDisabledDates] = useState<Date[]>([]);
   const queryClient = useQueryClient();
+
+  const { data: listRoom = [] } = useQuery({
+    queryKey: ["list-room"],
+    queryFn: () => getBookRoomApi(),
+  });
+
   const {
     data: room,
     isLoading,
@@ -57,6 +67,7 @@ export default function RoomDetailsPage() {
     queryFn: () => getRoomDetailsApi(idRoom),
     enabled: !!idRoom,
   });
+
   const { data: comment = [] } = useQuery({
     queryKey: ["comment", idRoom],
     queryFn: (): Promise<RoomComment[]> =>
@@ -71,6 +82,8 @@ export default function RoomDetailsPage() {
 
       setCheckIn(undefined);
       setCheckOut(undefined);
+      //sau khi đặt phòng thành công thì invalidate để query fetch lại
+      queryClient.invalidateQueries({ queryKey: ["list-room"] });
     },
     onError: (error) => {
       console.log("🌿 ~ RoomDetailsPage ~ error:", error);
@@ -83,7 +96,7 @@ export default function RoomDetailsPage() {
       id: 0,
       maPhong: Number(idRoom),
       ngayDen: checkIn ? format(checkIn, "MM/dd/yyyy") : "",
-      ngayDi: "",
+      ngayDi: checkOut ? format(checkOut, "MM/dd/yyyy") : "",
       soLuongKhach: 0,
       maNguoiDung: user?.user.id,
     },
@@ -93,6 +106,20 @@ export default function RoomDetailsPage() {
     if (!user) {
       return toast.warning("Vui lòng đăng nhập để đặt phòng");
     }
+    if (!checkIn || !checkOut) return;
+    const hasConflit = listRoom
+      .filter((r) => r.maPhong === Number(idRoom))
+      .some((r) => {
+        return (
+          new Date(checkIn) <= new Date(r.ngayDi) &&
+          new Date(checkOut) >= new Date(r.ngayDen)
+        );
+      });
+    if (hasConflit) {
+      toast.error("Khoảng thời gian này đã có người đặt!");
+      return;
+    }
+
     handleBooking({ ...data, soLuongKhach: guest });
   };
 
@@ -153,6 +180,21 @@ export default function RoomDetailsPage() {
 
   const nights = calculateNights();
 
+  useEffect(() => {
+    if (!listRoom) return;
+    const dates: Date[] = [];
+    listRoom
+      .filter((r) => r.maPhong === Number(idRoom))
+      .map((r) => {
+        const result = eachDayOfInterval({
+          start: parseISO(r.ngayDen),
+          end: parseISO(r.ngayDi),
+        });
+        dates.push(...result);
+      });
+    setDisabledDates(dates);
+  }, [listRoom, idRoom]);
+
   if (isLoading) return <RoomDetailSkeleton />;
   if (isError || !room) return <p>Không tìm thấy phòng</p>;
   return (
@@ -183,7 +225,7 @@ export default function RoomDetailsPage() {
 
             {/* Avatar host */}
             <img
-              src="/images/logo.svg"
+              src="/images/user-room.jpg"
               alt="Chủ nhà"
               className="w-12 h-12 rounded-full object-cover ring-2 ring-gray-200 ml-4"
             />
@@ -336,7 +378,18 @@ export default function RoomDetailsPage() {
                         date ? format(date, "MM/dd/yyyy") : ""
                       );
                     }}
-                    disabled={(date) => (checkOut ? date > checkOut : false)}
+                    disabled={(date) => {
+                      const isBooked = disabledDates.some(
+                        (d) => d.toDateString() === date.toDateString()
+                      );
+
+                      // Nếu đã chọn checkOut thì không cho chọn ngày sau checkOut
+                      const isAfterCheckOut = checkOut
+                        ? date >= checkOut
+                        : false;
+
+                      return isBooked || isAfterCheckOut;
+                    }}
                   />
                 </PopoverContent>
               </Popover>
@@ -362,9 +415,15 @@ export default function RoomDetailsPage() {
                         date ? format(date, "MM/dd/yyyy") : ""
                       );
                     }}
-                    disabled={(date) =>
-                      checkIn ? date < addDays(checkIn, 1) : false
-                    }
+                    disabled={(date) => {
+                      const isBooked = disabledDates.some(
+                        (d) => d.toDateString() === date.toDateString()
+                      );
+
+                      const isBeforeCheckIn = checkIn ? date <= checkIn : false;
+
+                      return isBooked || isBeforeCheckIn;
+                    }}
                   />
                 </PopoverContent>
               </Popover>

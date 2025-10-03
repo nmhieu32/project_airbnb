@@ -1,6 +1,6 @@
 import { useModalStore } from "@/store/modal.store";
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import Login from "../../Login";
 import Register from "../../Register";
 import { useAuthStore } from "@/store/auth.store";
@@ -8,7 +8,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -18,6 +17,7 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { setShowLogin, setShowRegister } = useModalStore();
   const { user, clearUser } = useAuthStore();
+  const navigate = useNavigate();
 
   const navItems = [
     { to: "/", label: "Nơi lưu trú", icon: "🏠" },
@@ -28,7 +28,6 @@ export default function Header() {
   const handleLogout = () => {
     clearUser();
   };
-
 
   return (
     <>
@@ -101,14 +100,12 @@ export default function Header() {
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-56">
-                    <DropdownMenuLabel>
-                      <NavLink
-                        to="user-details"
-                        className="font-semibold hover:text-purple-600"
-                      >
-                        Thông tin người dùng
-                      </NavLink>
-                    </DropdownMenuLabel>
+                    <DropdownMenuItem
+                      onClick={() => navigate("user-details")}
+                      className="font-semibold cursor-pointer"
+                    >
+                      Thông tin người dùng
+                    </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                       onClick={handleLogout}

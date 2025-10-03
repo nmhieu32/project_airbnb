@@ -61,3 +61,17 @@ export const updateUserApi = async (data: UpdateUser, idUser: number) => {
     throw error;
   }
 };
+
+export const uploadAvatarApi = async (formData: any) => {
+  try {
+    const response = await api.post<BaseApiResponse<User>>(
+      "users/upload-avatar",
+      formData
+    );
+
+    return response.data.content;
+  } catch (error) {
+    console.log("🌿 ~ uploadAvatarApi ~ error:", error);
+    throw error;
+  }
+};

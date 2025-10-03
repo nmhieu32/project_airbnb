@@ -1,6 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
   Form,
   FormControl,
   FormField,
@@ -21,6 +29,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import type { User } from "@/interfaces/auth.interface";
+import type { BaseApiResponse } from "@/interfaces/base.interface";
+import { api } from "@/services/api";
 import { updateUserApi } from "@/services/auth.api";
 import { getRoomByUserApi, getRoomDetailsApi } from "@/services/room.api";
 import { useAuthStore } from "@/store/auth.store";
@@ -28,11 +39,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { ChevronDownIcon } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import z from "zod";
+import UserDetailsSke from "../_components/Skeleton/user-details.ske";
 
 const schema = z.object({
   id: z.number().default(0),
@@ -74,14 +86,19 @@ export default function UserDetailsPage() {
   if (!user) return <Navigate to="/" />;
   const [openModal, setOpenModal] = useState(false);
   const [open, setOpen] = useState(false);
+  const [openImg, setOpenImg] = useState(false);
+  const navigate = useNavigate();
+  const [preview, setPreview] = useState(user.user.avatar);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const { data: listRoom } = useQuery({
+  const { data: listRoom, isError, isLoading } = useQuery({
     queryKey: ["user-detail", user.user.id],
     queryFn: () => getRoomByUserApi(user.user.id),
   });
   const mapped = listRoom?.map((item) => item.maPhong);
 
-  const { data: roomDetails } = useQuery({
+  const { data: roomDetails, isLoading: loadingRoomDetail } = useQuery({
     queryKey: ["room-detail", mapped],
     queryFn: async () => {
       if (!mapped?.length) return [];
@@ -141,16 +158,103 @@ export default function UserDetailsPage() {
     });
   };
 
+  const handleUpload = async () => {
+    if (!selectedFile)
+      return toast.warning("Vui lòng chọn ảnh trước khi upload");
+    const formData = new FormData();
+    formData.append("formFile", selectedFile);
+
+    try {
+      const response = await api.post<BaseApiResponse<User>>(
+        "users/upload-avatar",
+        formData
+      );
+      toast.success("Thay đổi hình đại diện thành công !");
+      setUser({ ...user, user: response.data.content });
+      setSelectedFile(null);
+      setOpenImg(false);
+    } catch (error: any) {
+      if (error.response) {
+        toast.error(error.response.data.content);
+        setSelectedFile(null);
+        setPreview(user.user.avatar);
+      }
+      if (inputRef.current) {
+        inputRef.current.value = "";
+      }
+    }
+  };
+  if(isLoading && loadingRoomDetail) return <UserDetailsSke/>
+  // if(loadingRoomDetail) return <UserDetailsSke/>
+  if(isError) return <div>Đã xảy ra lỗi</div>
+
   return (
     <div className="flex max-w-5xl mx-auto p-6 gap-6">
       {/* Sidebar trái */}
       <div className="w-1/4 flex flex-col items-center border rounded-xl p-4 shadow-sm">
-        <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center">
-          <span className="text-gray-500 text-sm">Ảnh</span>
-        </div>
-        <button className="mt-2 text-sm text-purple-500 hover:underline">
-          Cập nhật ảnh
-        </button>
+        <img
+          src={user.user.avatar}
+          alt="Avatar"
+          className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center"
+        />
+
+        <Dialog open={openImg} onOpenChange={setOpenImg}>
+          <DialogTrigger asChild>
+            <button
+              onClick={() => {
+                setPreview(user.user.avatar);
+                setOpenImg(true);
+              }}
+              className="mt-2 text-sm text-purple-500 hover:underline"
+            >
+              Cập nhật ảnh
+            </button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="text-center">
+                Thay đổi ảnh đại diện
+              </DialogTitle>
+            </DialogHeader>
+            <div className="flex flex-col items-center gap-4">
+              {/* Hiển thị ảnh preview */}
+              <div className="w-28 h-28 rounded-full overflow-hidden border">
+                <img
+                  src={preview}
+                  alt="Avatar Preview"
+                  width={112}
+                  height={112}
+                  className="object-cover w-full h-full"
+                />
+              </div>
+
+              {/* Chọn file */}
+              <Input
+                type="file"
+                id="image"
+                ref={inputRef}
+                accept=".png,.jpeg,.jpg, .gif"
+                onChange={(events) => {
+                  const hinhAnh = events.target.files?.[0];
+                  if (hinhAnh) {
+                    setPreview(URL.createObjectURL(hinhAnh));
+                    setSelectedFile(hinhAnh);
+                  }
+                }}
+              />
+
+              {/* Nút Upload */}
+              <DialogFooter>
+                <Button
+                  className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 transform text-white w-full cursor-pointer"
+                  onClick={handleUpload}
+                >
+                  Upload Avatar
+                </Button>
+              </DialogFooter>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         <div className="mt-6 w-full text-center">
           <h3 className="font-semibold text-gray-700">
@@ -193,7 +297,8 @@ export default function UserDetailsPage() {
           {roomDetails?.map((item, index) => (
             <div
               key={index}
-              className="flex border rounded-xl overflow-hidden shadow-sm"
+              className="flex border rounded-xl overflow-hidden shadow-sm cursor-pointer"
+              onClick={() => navigate(`/room-details/${item?.id}`)}
             >
               <img
                 src={item?.hinhAnh}
