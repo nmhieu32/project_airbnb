@@ -29,7 +29,12 @@ export default function ListRoomByLocationPage() {
     }
     setFavoriteRooms(newFavorites);
   };
+
+
+
   if (isLoading) return <ListRoomsSkeleton />;
+  const mapUrl = `https://www.google.com/maps?q=${encodeURIComponent(`${findLocation?.tinhThanh || "Việt Nam"}, Việt Nam`)}&output=embed`;
+
   if (isError) return <p>Có lỗi khi tải dữ liệu</p>;
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
@@ -175,7 +180,7 @@ export default function ListRoomByLocationPage() {
         <div className="relative bg-gray-200 lg:sticky lg:top-0 h-96 lg:h-screen">
           <div className="absolute inset-0 rounded-l-2xl overflow-hidden">
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d501725.4184655224!2d106.36557702485804!3d10.755292850645242!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317529292e8d3dd1%3A0xf15f5aad773c112b!2zVGjDoG5oIHBo4buRIEjhu5MgQ2jDrSBNaW5oLCBI4buTIENow60gTWluaCwgVmnhu4d0IE5hbQ!5e0!3m2!1svi!2s!4v1757586661916!5m2!1svi!2s"
+              src={mapUrl}
               width="100%"
               height="100%"
               style={{ border: "0" }}
