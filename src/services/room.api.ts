@@ -40,50 +40,22 @@ export const bookRoomApi = async (data: BookRoom) => {
   }
 };
 
-export const getAllRoomsApi = async (): Promise<Room[]> => {
+export const getRoomByUserApi = async (idUser: number) => {
   try {
-    const response = await api.get<BaseApiResponse<Room[]>>("phong-thue");
+    const response = await api.get<BaseApiResponse<BookRoom[]>>(
+      `dat-phong/lay-theo-nguoi-dung/${idUser}`
+    );
     return response.data.content;
   } catch (error) {
-    console.error("❌ getAllRoomsApi error:", error);
-    return [];
+    console.log("🌿 ~ getRoomByUserApi ~ error:", error);
   }
 };
-export const addRoomApi = async (roomData: any): Promise<Room | null> => {
+
+export const getBookRoomApi = async () => {
   try {
-    const response = await api.post<BaseApiResponse<Room>>("phong-thue", roomData);
-    return response.data.content;
-  } catch (error: any) {
-    console.error("❌ Lỗi khi thêm phòng:", error);
-    throw error;
-  }
-};
-// 🟢 API cập nhật phòng
-export const updateRoomApi = async (id: number, data: any) => {
-  const res = await api.put<BaseApiResponse<any>>(`phong-thue/${id}`, data);
-  return res.data.content;
-};
-
-// 🟢 API upload hình phòng
-export const uploadRoomImageApi = async (maPhong: number | string, file: File) => {
-  const formData = new FormData();
-  formData.append("formFile", file);
-
-  const res = await api.post<BaseApiResponse<any>>(
-    `phong-thue/upload-hinh-phong?maPhong=${maPhong}`,
-    formData,
-    { headers: { "Content-Type": "multipart/form-data" } }
-  );
-
-  return res.data.content;
-};
-// 🟢 Delete Room
-export const deleteRoomApi = async (id: number) => {
-  try {
-    const response = await api.delete<BaseApiResponse<any>>(`phong-thue/${id}`);
+    const response = await api.get<BaseApiResponse<BookRoom[]>>("dat-phong");
     return response.data.content;
   } catch (error) {
-    console.log("🍃 ~ deleteRoomApi ~ error:", error);
-    throw error;
+    console.log("🌿 ~ getBookRoomApi ~ error:", error);
   }
 };
