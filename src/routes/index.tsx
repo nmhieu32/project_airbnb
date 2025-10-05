@@ -5,8 +5,6 @@ const HomeTemplate = lazy(() => import("@/pages/HomeTemplate"));
 const HomePage = lazy(() => import("@/pages/HomeTemplate/HomePage"));
 const NotFoundPage = lazy(() => import("@/pages/HomeTemplate/NotFoundPage"));
 const AdminTemplate = lazy(() => import("@/pages/AdminTemplate"));
-const ExperiencePage = lazy(() => import("@/pages/HomeTemplate/ExperiencePage"))
-const ServicePage = lazy(() => import("@/pages/HomeTemplate/ServicePage"))
 const ListRoom = lazy(() => import("@/pages/HomeTemplate/ListRoomPage"));
 const RoomDetails = lazy(() => import("@/pages/HomeTemplate/RoomDetailsPage"));
 const UserDetails = lazy(() => import("@/pages/HomeTemplate/UserDetailsPage"));
@@ -58,14 +56,6 @@ export const routes: RouteObject[] = [
       {
         path: "user-details",
         element: withSuspense(UserDetails),
-      },
-      {
-        path: "experience",
-        element: withSuspense(ExperiencePage),
-      },
-      {
-        path: "service",
-        element: withSuspense(ServicePage),
       },
     ],
   },

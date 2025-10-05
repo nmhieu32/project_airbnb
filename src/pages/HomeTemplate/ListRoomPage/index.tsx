@@ -1,20 +1,54 @@
+import { getListLocationApi } from "@/services/location.api";
+import { getListRoomByLocationApi } from "@/services/room.api";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { NavLink, useParams } from "react-router-dom";
 import SearchBarHome from "../HomePage/SearchBar";
 import { Car, Coffee, Heart, MapPin, Wifi } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useLocationStore } from "@/store/location.store";
+import { useRoomStore } from "@/store/room.store";
+import { toSlug } from "@/utils/slug";
 import ListRoomsSkeleton from "../_components/Skeleton/list-rooms.ske";
-import { format } from "date-fns";
-import useLocationRoom from "@/utils/useLocationRoom";
 
 export default function ListRoomByLocationPage() {
   const { slug } = useParams();
 
   const [favoriteRooms, setFavoriteRooms] = useState(new Set());
-  const { guests, checkIn, checkOut } = useLocationStore();
+  const { guests } = useLocationStore();
 
-  const { rooms, isLoading, isError, findLocation } = useLocationRoom(slug);
+  const { setRoom } = useRoomStore();
+
+  const { data: locations } = useQuery({
+    queryKey: ["get-location"],
+    queryFn: () => getListLocationApi(),
+  });
+
+  const mapped = locations?.map((loc) => {
+    return {
+      ...loc,
+      slug: toSlug(loc.tinhThanh),
+    };
+  });
+
+  const findLocation = mapped?.find((loc) => toSlug(loc.tinhThanh) === slug);
+
+  const {
+    data: rooms = [],
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["rooms", findLocation?.id],
+    queryFn: async () => {
+      const hasRoom = await getListRoomByLocationApi(findLocation?.id);
+      if (hasRoom) {
+        setRoom(hasRoom);
+      }
+      return hasRoom;
+    },
+    enabled: !!findLocation?.id,
+    placeholderData: keepPreviousData,
+  });
 
   const filteredRoom = guests
     ? rooms.filter((item) => item.khach === guests)
@@ -29,12 +63,7 @@ export default function ListRoomByLocationPage() {
     }
     setFavoriteRooms(newFavorites);
   };
-
-
-
-  if (isLoading) return <ListRoomsSkeleton />;
-  const mapUrl = `https://www.google.com/maps?q=${encodeURIComponent(`${findLocation?.tinhThanh || "Việt Nam"}, Việt Nam`)}&output=embed`;
-
+  if (isLoading) return <ListRoomsSkeleton/>;
   if (isError) return <p>Có lỗi khi tải dữ liệu</p>;
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
@@ -70,9 +99,8 @@ export default function ListRoomByLocationPage() {
                 <span className="text-lg font-semibold text-blue-600">
                   Có {filteredRoom?.length || 0} chỗ ở
                 </span>
-                <span>{checkIn ? format(checkIn, "dd/MM/yyyy") : ""}</span>
                 <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
-                <span>{checkOut ? format(checkOut, "dd/MM/yyyy") : ""}</span>
+                <span>1 tháng</span>
               </div>
             </div>
 
@@ -86,7 +114,7 @@ export default function ListRoomByLocationPage() {
                   <div className="flex gap-6 p-6">
                     <div className="relative w-48 h-36 flex-shrink-0 overflow-hidden rounded-xl">
                       <img
-                        src={room.hinhAnh ? room.hinhAnh : "/images/logo.svg"}
+                        src={room.hinhAnh}
                         alt={room.tenPhong}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       />
@@ -180,7 +208,7 @@ export default function ListRoomByLocationPage() {
         <div className="relative bg-gray-200 lg:sticky lg:top-0 h-96 lg:h-screen">
           <div className="absolute inset-0 rounded-l-2xl overflow-hidden">
             <iframe
-              src={mapUrl}
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d501725.4184655224!2d106.36557702485804!3d10.755292850645242!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317529292e8d3dd1%3A0xf15f5aad773c112b!2zVGjDoG5oIHBo4buRIEjhu5MgQ2jDrSBNaW5oLCBI4buTIENow60gTWluaCwgVmnhu4d0IE5hbQ!5e0!3m2!1svi!2s!4v1757586661916!5m2!1svi!2s"
               width="100%"
               height="100%"
               style={{ border: "0" }}

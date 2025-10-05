@@ -30,7 +30,7 @@ export default function Login() {
     onSuccess: (currentUser) => {
       setShowLogin(false);
       setUser(currentUser),
-        navigate(user?.user.role === "ADMIN" ? "/admin" : "/");
+        navigate(currentUser?.user.role === "ADMIN" ? "/admin" : "/");
     },
     onError: () => {
       toast.error("Tài khoản hoặc mật khẩu không đúng");
