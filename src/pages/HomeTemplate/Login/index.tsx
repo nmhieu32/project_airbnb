@@ -22,7 +22,7 @@ type LoginFormInput = z.infer<typeof schema>;
 
 export default function Login() {
   const { showLogin, setShowLogin, setShowRegister } = useModalStore();
-  const { user, setUser } = useAuthStore();
+  const {  setUser } = useAuthStore();
   const navigate = useNavigate();
 
   const { mutate: handleLogin, isPending } = useMutation({
