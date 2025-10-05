@@ -1,9 +1,0 @@
-/* --- FIX Radix Dialog + Select bị ẩn --- */
-[data-radix-dialog-content] {
-  overflow: visible !important;
-}
-
-[data-radix-dialog-content] select {
-  position: relative;
-  z-index: 9999 !important;
-}
