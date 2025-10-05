@@ -38,3 +38,40 @@ export const registerApi = async (data: RegisterRequest) => {
     throw error;
   }
 };
+
+type UpdateUser = {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  birthday: string;
+  gender: boolean;
+  role: string;
+};
+
+export const updateUserApi = async (data: UpdateUser, idUser: number) => {
+  try {
+    const response = await api.put<BaseApiResponse<User>>(
+      `users/${idUser}`,
+      data
+    );
+    return response.data.content;
+  } catch (error) {
+    console.log("🌿 ~ updateUserApi ~ error:", error);
+    throw error;
+  }
+};
+
+export const uploadAvatarApi = async (formData: any) => {
+  try {
+    const response = await api.post<BaseApiResponse<User>>(
+      "users/upload-avatar",
+      formData
+    );
+
+    return response.data.content;
+  } catch (error) {
+    console.log("🌿 ~ uploadAvatarApi ~ error:", error);
+    throw error;
+  }
+};

@@ -85,5 +85,22 @@ export const deleteRoomApi = async (id: number) => {
   } catch (error) {
     console.log("🍃 ~ deleteRoomApi ~ error:", error);
     throw error;
+export const getRoomByUserApi = async (idUser: number) => {
+  try {
+    const response = await api.get<BaseApiResponse<BookRoom[]>>(
+      `dat-phong/lay-theo-nguoi-dung/${idUser}`
+    );
+    return response.data.content;
+  } catch (error) {
+    console.log("🌿 ~ getRoomByUserApi ~ error:", error);
+  }
+};
+
+export const getBookRoomApi = async () => {
+  try {
+    const response = await api.get<BaseApiResponse<BookRoom[]>>("dat-phong");
+    return response.data.content;
+  } catch (error) {
+    console.log("🌿 ~ getBookRoomApi ~ error:", error);
   }
 };
