@@ -33,8 +33,9 @@ import {
 } from "@/utils/checkValidation";
 
 import { addAdminApi, updateUserApi } from "@/services/user.api"; // ✅ sửa import
-import { toast } from "react-toastify";
+
 import { useQueryClient } from "@tanstack/react-query"; // ✅ invalidate query sau khi thêm/sửa
+import { toast } from "sonner";
 
 export function AddUserForm({
   status,

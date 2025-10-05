@@ -3,18 +3,16 @@
 import * as React from "react"
 import {
   AudioWaveform,
-  BookOpen,
+  
   Bot,
   Command,
   Frame,
   GalleryVerticalEnd,
   Map,
   PieChart,
-  Settings2,
-  SquareTerminal,
+  
 } from "lucide-react"
 
-import { NavMain } from "@/pages/AdminTemplate/components/nav-main"
 import { NavProjects } from "@/pages/AdminTemplate/components/nav-projects"
 import { NavUser } from "@/pages/AdminTemplate/components/nav-user"
 import { TeamSwitcher } from "@/pages/AdminTemplate/components/team-switcher"

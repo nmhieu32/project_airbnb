@@ -62,7 +62,10 @@ export const deleteUserApi = async (id: number): Promise<boolean> => {
       `users?id=${id}`
     );
     // Nếu backend trả status 200 coi như thành công
-    return true;
+    if(response.status === 200) {
+      return true;
+    }
+    return false
   } catch (error) {
     console.log("❌ ~ deleteUserApi error:", error);
     return false;

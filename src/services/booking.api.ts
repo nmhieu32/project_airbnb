@@ -1,4 +1,4 @@
-import type { BookRoom, Room } from "@/interfaces/room.interface";
+import type { BookRoom } from "@/interfaces/room.interface";
 import { api } from "./api";
 import type { BaseApiResponse } from "@/interfaces/base.interface";
 
