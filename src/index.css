@@ -159,6 +159,23 @@
   background-repeat: no-repeat;
   animation: l11 1s infinite linear;
 }
+@keyframes l11{ 
+  100%{transform: rotate(1turn)}
+}
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+}
+/* Cho phép dropdown của <select> hiển thị ra ngoài dialog */
+[data-radix-dialog-content] {
+  overflow: visible !important;
+}
+
+[data-radix-dialog-content] select {
+  position: relative;
+  z-index: 9999; /* giúp dropdown nổi lên trên overlay */
+}
 @keyframes l11 {
   100% {
     transform: rotate(1turn);
