@@ -183,3 +183,7 @@
     transform: rotate(1turn);
   }
 }
+
+button {
+  cursor: pointer
+}

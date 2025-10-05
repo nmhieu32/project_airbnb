@@ -92,7 +92,11 @@ export default function UserDetailsPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const { data: listRoom, isError, isLoading } = useQuery({
+  const {
+    data: listRoom,
+    isError,
+    isLoading,
+  } = useQuery({
     queryKey: ["user-detail", user.user.id],
     queryFn: () => getRoomByUserApi(user.user.id),
   });
@@ -184,19 +188,22 @@ export default function UserDetailsPage() {
       }
     }
   };
-  if(isLoading && loadingRoomDetail) return <UserDetailsSke/>
-  // if(loadingRoomDetail) return <UserDetailsSke/>
-  if(isError) return <div>Đã xảy ra lỗi</div>
+  if (isLoading && loadingRoomDetail) return <UserDetailsSke />;
+  if (isError) return <div>Đã xảy ra lỗi</div>;
 
   return (
     <div className="flex max-w-5xl mx-auto p-6 gap-6">
       {/* Sidebar trái */}
       <div className="w-1/4 flex flex-col items-center border rounded-xl p-4 shadow-sm">
-        <img
-          src={user.user.avatar}
-          alt="Avatar"
-          className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center"
-        />
+        <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full blur-lg opacity-50"></div>
+                  <img
+                    src={user.user.avatar}
+                    alt="Avatar"
+                    className="relative w-28 h-28 rounded-full border-4 border-white shadow-xl object-cover"
+                  />
+                  <div className="absolute -bottom-1 -right-1 bg-green-500 w-7 h-7 rounded-full border-4 border-white"></div>
+                </div>
 
         <Dialog open={openImg} onOpenChange={setOpenImg}>
           <DialogTrigger asChild>
@@ -205,7 +212,7 @@ export default function UserDetailsPage() {
                 setPreview(user.user.avatar);
                 setOpenImg(true);
               }}
-              className="mt-2 text-sm text-purple-500 hover:underline"
+              className="mt-3 px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white text-sm rounded-full hover:shadow-lg transition-all duration-300 hover:scale-105 font-medium cursor-pointer"
             >
               Cập nhật ảnh
             </button>
@@ -256,24 +263,31 @@ export default function UserDetailsPage() {
           </DialogContent>
         </Dialog>
 
-        <div className="mt-6 w-full text-center">
-          <h3 className="font-semibold text-gray-700">
-            <img className="w-6 inline" src="images/verify.png" alt="Verify" />{" "}
-            Xác minh danh tính
-          </h3>
-          <p className="text-xs text-gray-500 mt-1">
+        <div className="mt-6 p-4 bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl border border-purple-100">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <img className="w-6" src="images/verify.png" alt="Verify" />
+            <h3 className="text-sm font-bold text-gray-800">
+              Xác minh danh tính
+            </h3>
+          </div>
+          <p className="text-xs text-gray-600 text-center mb-3">
             Xác thực danh tính của bạn với huy hiệu xác minh
           </p>
-          <button className="mt-2 px-4 py-2 border rounded-lg text-sm text-gray-700 hover:bg-gray-50">
-            Nhận huy hiệu
+          <button className="w-full px-4 py-2.5 bg-white border-2 border-purple-200 rounded-xl text-sm text-gray-700 font-medium hover:bg-purple-50 hover:border-purple-300 transition-all duration-300 hover:shadow-md">
+            ✨ Nhận huy hiệu
           </button>
         </div>
 
-        <div className="mt-6 text-sm text-gray-700">
-          <h4 className="font-medium">{user.user.name} đã xác nhận</h4>
-          <ul className="mt-1 text-xs text-gray-600 list-inside">
-            <li>✅ Địa chỉ email</li>
-          </ul>
+        <div className="mt-6 p-4 bg-gray-50 rounded-xl">
+          <h4 className="font-semibold text-gray-800 mb-2">
+            {user.user.name} đã xác nhận
+          </h4>
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2 text-sm text-gray-700">
+              <span className="text-green-500 font-bold">✓</span>
+              <span>Địa chỉ email</span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -290,7 +304,7 @@ export default function UserDetailsPage() {
           Chỉnh sửa hồ sơ
         </button>
 
-        <h3 className="mt-6 text-lg font-semibold">Phòng đã thuê</h3>
+        <h3 className="mt-6 text-lg font-semibold">{roomDetails?.length || 0} Phòng đã thuê</h3>
 
         {/* Danh sách phòng */}
         <div className="mt-4 max-h-[400px] overflow-y-auto space-y-4 pr-2">
@@ -312,10 +326,26 @@ export default function UserDetailsPage() {
                   {item?.phongTam} phòng tắm
                 </p>
                 <p className="text-sm text-gray-500 flex gap-2 mt-1">
-                  {item?.wifi && <span>📶 Wifi</span>}
-                  {item?.bep && <span>🍳 Bếp</span>}
-                  {item?.dieuHoa && <span>❄️ Điều hoà</span>}
-                  {item?.mayGiat && <span>🧺 Máy giặt</span>}
+                  {item?.wifi && (
+                    <span className="px-3 py-1 bg-blue-50 text-blue-700 text-xs rounded-full font-medium">
+                      📶 Wifi
+                    </span>
+                  )}
+                  {item?.bep && (
+                    <span className="px-3 py-1 bg-orange-50 text-orange-700 text-xs rounded-full font-medium">
+                      🍳 Bếp
+                    </span>
+                  )}
+                  {item?.dieuHoa && (
+                    <span className="px-3 py-1 bg-cyan-50 text-cyan-700 text-xs rounded-full font-medium">
+                      ❄️ Điều hoà
+                    </span>
+                  )}
+                  {item?.mayGiat && (
+                    <span className="px-3 py-1 bg-purple-50 text-purple-700 text-xs rounded-full font-medium">
+                      🧺 Máy giặt
+                    </span>
+                  )}
                 </p>
               </div>
               <div className="p-4 text-right font-semibold text-gray-800 whitespace-nowrap">
@@ -329,8 +359,14 @@ export default function UserDetailsPage() {
 
       {/* Popup (modal) chỉnh sửa hồ sơ */}
       {openModal && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-lg w-full max-w-md p-6 relative">
+        <div
+          className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+          onClick={() => setOpenModal(false)}
+        >
+          <div
+            className="bg-white animate-in fade-in zoom-in duration-300 rounded-xl shadow-lg w-full max-w-md p-6 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
             <h3 className="text-xl font-semibold text-gray-800 mb-4">
               Chỉnh sửa hồ sơ
             </h3>
