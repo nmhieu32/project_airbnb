@@ -2,7 +2,6 @@ import type { DataLocation, Location } from "@/interfaces/location.interface";
 import { api } from "./api";
 import type { BaseApiResponse } from "@/interfaces/base.interface";
 
-// 🟢 Get all locations
 export const getListLocationApi = async (): Promise<Location[] | undefined> => {
   try {
     const response = await api.get<BaseApiResponse<Location[]>>("vi-tri");
@@ -12,7 +11,6 @@ export const getListLocationApi = async (): Promise<Location[] | undefined> => {
   }
 };
 
-// 🟢 Get paginated locations
 export const getListLocationPaginationApi = async (
   pageIndex: number,
   pageSize: number

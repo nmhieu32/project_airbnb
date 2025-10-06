@@ -22,7 +22,7 @@ type LoginFormInput = z.infer<typeof schema>;
 
 export default function Login() {
   const { showLogin, setShowLogin, setShowRegister } = useModalStore();
-  const {  setUser } = useAuthStore();
+  const { user, setUser } = useAuthStore();
   const navigate = useNavigate();
 
   const { mutate: handleLogin, isPending } = useMutation({
@@ -30,7 +30,7 @@ export default function Login() {
     onSuccess: (currentUser) => {
       setShowLogin(false);
       setUser(currentUser),
-        navigate(currentUser?.user.role === "ADMIN" ? "/admin" : "/");
+        navigate(user?.user.role === "ADMIN" ? "/admin" : "/");
     },
     onError: () => {
       toast.error("Tài khoản hoặc mật khẩu không đúng");
