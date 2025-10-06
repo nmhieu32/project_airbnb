@@ -29,7 +29,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-
+import { NavLink } from "react-router-dom"
 export function NavUser({
   user,
 }: {
@@ -104,7 +104,7 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <LogOut />
-              Log out
+              <NavLink to="/">Home</NavLink>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

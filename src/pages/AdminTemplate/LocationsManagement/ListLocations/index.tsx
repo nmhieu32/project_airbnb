@@ -83,13 +83,7 @@ export function TableLocation({ searchTerm }: TableLocationProps) {
   return (
     <div className="w-full overflow-x-auto">
       {/* 🟢 Nút thêm vị trí */}
-      <div className="flex justify-end mb-4">
-        <AddLocationForm status={0} onSuccess={fetchLocations}>
-          <Button className="bg-red-500 text-white hover:bg-red-600">
-            + Thêm vị trí
-          </Button>
-        </AddLocationForm>
-      </div>
+      
 
       <Table className="table-auto border-collapse w-full">
         <TableCaption>Danh sách vị trí.</TableCaption>
