@@ -75,7 +75,9 @@ export default function Header() {
                   to={item.to}
                   className={({ isActive }) =>
                     `group relative flex items-center space-x-2 px-4 py-2 rounded-xl text-gray-700 hover:text-purple-600 transition-all duration-300 font-medium ${
-                      isActive ? "my-active text-purple-600 bg-purple-50" : "hover:bg-gray-50"
+                      isActive
+                        ? "my-active text-purple-600 bg-purple-50"
+                        : "hover:bg-gray-50"
                     }`
                   }
                 >
@@ -95,7 +97,10 @@ export default function Header() {
               <div className="hidden md:flex items-center space-x-4">
                 <div className="flex items-center gap-3 px-4 py-2 bg-gradient-to-r from-purple-50 to-blue-50 rounded-full">
                   <span className="text-gray-700 font-medium text-sm">
-                    Xin chào, <span className="font-bold text-purple-600">{user.user?.name}</span>
+                    Xin chào,{" "}
+                    <span className="font-bold text-purple-600">
+                      {user.user?.name}
+                    </span>
                   </span>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -112,10 +117,17 @@ export default function Header() {
                         </Avatar>
                       </button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-64 mt-2 rounded-2xl shadow-xl border border-gray-100">
+                    <DropdownMenuContent
+                      align="end"
+                      className="w-64 mt-2 rounded-2xl shadow-xl border border-gray-100"
+                    >
                       <div className="px-4 py-3 border-b border-gray-100">
-                        <p className="text-sm font-semibold text-gray-900">{user.user?.name}</p>
-                        <p className="text-xs text-gray-500 mt-0.5">{user.user?.email}</p>
+                        <p className="text-sm font-semibold text-gray-900">
+                          {user.user?.name}
+                        </p>
+                        <p className="text-xs text-gray-500 mt-0.5">
+                          {user.user?.email}
+                        </p>
                       </div>
                       <DropdownMenuItem
                         onClick={() => navigate("user-details")}
@@ -124,6 +136,20 @@ export default function Header() {
                         <span className="mr-2">👤</span>
                         Thông tin người dùng
                       </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => navigate("user-details")}
+                        className="font-medium cursor-pointer py-3 px-4 hover:bg-purple-50 rounded-lg m-1 transition-colors"
+                      >
+                       
+                      </DropdownMenuItem>
+                       <DropdownMenuItem
+  onClick={() => navigate("/admin/users-management")}
+  className="font-medium cursor-pointer py-3 px-4 hover:bg-purple-50 rounded-lg m-1 transition-colors"
+>
+  <span className="mr-2">🛠️</span>
+  Page Admin
+</DropdownMenuItem>
+
                       <DropdownMenuSeparator className="my-1" />
                       <DropdownMenuItem
                         onClick={handleLogout}
@@ -162,9 +188,21 @@ export default function Header() {
               className="md:hidden flex flex-col justify-center items-center space-y-1.5 p-2 rounded-lg hover:bg-gray-100 transition-colors group"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
-              <span className={`w-6 h-0.5 bg-gray-600 transition-all duration-300 ${mobileMenuOpen ? 'rotate-45 translate-y-2' : ''}`}></span>
-              <span className={`w-6 h-0.5 bg-gray-600 transition-all duration-300 ${mobileMenuOpen ? 'opacity-0' : ''}`}></span>
-              <span className={`w-6 h-0.5 bg-gray-600 transition-all duration-300 ${mobileMenuOpen ? '-rotate-45 -translate-y-2' : ''}`}></span>
+              <span
+                className={`w-6 h-0.5 bg-gray-600 transition-all duration-300 ${
+                  mobileMenuOpen ? "rotate-45 translate-y-2" : ""
+                }`}
+              ></span>
+              <span
+                className={`w-6 h-0.5 bg-gray-600 transition-all duration-300 ${
+                  mobileMenuOpen ? "opacity-0" : ""
+                }`}
+              ></span>
+              <span
+                className={`w-6 h-0.5 bg-gray-600 transition-all duration-300 ${
+                  mobileMenuOpen ? "-rotate-45 -translate-y-2" : ""
+                }`}
+              ></span>
             </button>
           </div>
 
@@ -179,8 +217,8 @@ export default function Header() {
                     onClick={() => setMobileMenuOpen(false)}
                     className={({ isActive }) =>
                       `flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${
-                        isActive 
-                          ? "my-active bg-gradient-to-r from-purple-50 to-blue-50 text-purple-600" 
+                        isActive
+                          ? "my-active bg-gradient-to-r from-purple-50 to-blue-50 text-purple-600"
                           : "text-gray-700 hover:bg-gray-50"
                       }`
                     }
@@ -203,8 +241,12 @@ export default function Header() {
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className="font-semibold text-gray-900 text-sm">{user.user.name}</p>
-                        <p className="text-xs text-gray-500">{user.user.email}</p>
+                        <p className="font-semibold text-gray-900 text-sm">
+                          {user.user.name}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {user.user.email}
+                        </p>
                       </div>
                     </div>
                     <NavLink
@@ -220,6 +262,9 @@ export default function Header() {
                       onClick={handleLogout}
                     >
                       <span>🚪</span>
+                      <NavLink to="/admin/users-management">
+                        <span>Page Admin 1</span>
+                      </NavLink>
                       <span>Đăng xuất</span>
                     </button>
                   </div>
