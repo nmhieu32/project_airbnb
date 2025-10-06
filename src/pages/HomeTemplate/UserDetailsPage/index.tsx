@@ -192,18 +192,18 @@ export default function UserDetailsPage() {
   if (isError) return <div>Đã xảy ra lỗi</div>;
 
   return (
-    <div className="flex max-w-5xl mx-auto p-6 gap-6">
+    <div className="flex flex-col lg:flex-row max-w-5xl mx-auto p-4 sm:p-6 gap-4 sm:gap-6">
       {/* Sidebar trái */}
-      <div className="w-1/4 flex flex-col items-center border rounded-xl p-4 shadow-sm">
+      <div className="w-full lg:w-1/4 flex flex-col items-center border rounded-xl p-4 shadow-sm">
         <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full blur-lg opacity-50"></div>
-                  <img
-                    src={user.user.avatar}
-                    alt="Avatar"
-                    className="relative w-28 h-28 rounded-full border-4 border-white shadow-xl object-cover"
-                  />
-                  <div className="absolute -bottom-1 -right-1 bg-green-500 w-7 h-7 rounded-full border-4 border-white"></div>
-                </div>
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full blur-lg opacity-50 [color-scheme:light]"></div>
+          <img
+            src={user.user.avatar}
+            alt="Avatar"
+            className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 border-white shadow-xl object-cover"
+          />
+          <div className="absolute -bottom-1 -right-1 bg-green-500 w-6 h-6 sm:w-7 sm:h-7 rounded-full border-4 border-white"></div>
+        </div>
 
         <Dialog open={openImg} onOpenChange={setOpenImg}>
           <DialogTrigger asChild>
@@ -212,20 +212,20 @@ export default function UserDetailsPage() {
                 setPreview(user.user.avatar);
                 setOpenImg(true);
               }}
-              className="mt-3 px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white text-sm rounded-full hover:shadow-lg transition-all duration-300 hover:scale-105 font-medium cursor-pointer"
+              className="mt-3 px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white text-xs sm:text-sm rounded-full hover:shadow-lg transition-all duration-300 hover:scale-105 font-medium cursor-pointer [color-scheme:light]"
             >
               Cập nhật ảnh
             </button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="w-[90vw] max-w-md mx-auto">
             <DialogHeader>
-              <DialogTitle className="text-center">
+              <DialogTitle className="text-center text-base sm:text-lg">
                 Thay đổi ảnh đại diện
               </DialogTitle>
             </DialogHeader>
             <div className="flex flex-col items-center gap-4">
               {/* Hiển thị ảnh preview */}
-              <div className="w-28 h-28 rounded-full overflow-hidden border">
+              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border">
                 <img
                   src={preview}
                   alt="Avatar Preview"
@@ -248,12 +248,13 @@ export default function UserDetailsPage() {
                     setSelectedFile(hinhAnh);
                   }
                 }}
+                className="text-sm"
               />
 
               {/* Nút Upload */}
-              <DialogFooter>
+              <DialogFooter className="w-full">
                 <Button
-                  className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 transform text-white w-full cursor-pointer"
+                  className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 transform text-white w-full cursor-pointer text-sm [color-scheme:light]"
                   onClick={handleUpload}
                 >
                   Upload Avatar
@@ -263,27 +264,27 @@ export default function UserDetailsPage() {
           </DialogContent>
         </Dialog>
 
-        <div className="mt-6 p-4 bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl border border-purple-100">
+        <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl border border-purple-100 w-full">
           <div className="flex items-center justify-center gap-2 mb-2">
-            <img className="w-6" src="images/verify.png" alt="Verify" />
-            <h3 className="text-sm font-bold text-gray-800">
+            <img className="w-5 sm:w-6" src="images/verify.png" alt="Verify" />
+            <h3 className="text-xs sm:text-sm font-bold text-gray-800">
               Xác minh danh tính
             </h3>
           </div>
           <p className="text-xs text-gray-600 text-center mb-3">
             Xác thực danh tính của bạn với huy hiệu xác minh
           </p>
-          <button className="w-full px-4 py-2.5 bg-white border-2 border-purple-200 rounded-xl text-sm text-gray-700 font-medium hover:bg-purple-50 hover:border-purple-300 transition-all duration-300 hover:shadow-md">
+          <button className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-white border-2 border-purple-200 rounded-xl text-xs sm:text-sm text-gray-700 font-medium hover:bg-purple-50 hover:border-purple-300 transition-all duration-300 hover:shadow-md">
             ✨ Nhận huy hiệu
           </button>
         </div>
 
-        <div className="mt-6 p-4 bg-gray-50 rounded-xl">
-          <h4 className="font-semibold text-gray-800 mb-2">
+        <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-gray-50 rounded-xl w-full">
+          <h4 className="font-semibold text-sm sm:text-base text-gray-800 mb-2">
             {user.user.name} đã xác nhận
           </h4>
           <div className="space-y-1.5">
-            <div className="flex items-center gap-2 text-sm text-gray-700">
+            <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-700">
               <span className="text-green-500 font-bold">✓</span>
               <span>Địa chỉ email</span>
             </div>
@@ -292,65 +293,65 @@ export default function UserDetailsPage() {
       </div>
 
       {/* Nội dung chính */}
-      <div className="flex-1">
-        <h2 className="text-2xl font-bold">
+      <div className="flex-1 w-full">
+        <h2 className="text-xl sm:text-2xl font-bold">
           Xin chào, tôi là {user.user.name}
         </h2>
-        <p className="text-sm text-gray-500 mt-1">Bắt đầu tham gia vào 2021</p>
+        <p className="text-xs sm:text-sm text-gray-500 mt-1">Bắt đầu tham gia vào 2021</p>
         <button
           onClick={handleOpenModal}
-          className="text-sm text-purple-500 hover:underline cursor-pointer font-bold"
+          className="text-xs sm:text-sm text-purple-500 hover:underline cursor-pointer font-bold"
         >
           Chỉnh sửa hồ sơ
         </button>
 
-        <h3 className="mt-6 text-lg font-semibold">{roomDetails?.length || 0} Phòng đã thuê</h3>
+        <h3 className="mt-4 sm:mt-6 text-base sm:text-lg font-semibold">{roomDetails?.length || 0} Phòng đã thuê</h3>
 
         {/* Danh sách phòng */}
-        <div className="mt-4 max-h-[400px] overflow-y-auto space-y-4 pr-2">
+        <div className="mt-4 max-h-[400px] sm:max-h-[500px] overflow-y-auto space-y-3 sm:space-y-4 pr-2">
           {roomDetails?.map((item, index) => (
             <div
               key={index}
-              className="flex border rounded-xl overflow-hidden shadow-sm cursor-pointer"
+              className="flex flex-col sm:flex-row border rounded-xl overflow-hidden shadow-sm cursor-pointer hover:shadow-md transition-shadow"
               onClick={() => navigate(`/room-details/${item?.id}`)}
             >
               <img
                 src={item?.hinhAnh}
                 alt={item?.tenPhong}
-                className="w-48 h-36 object-cover"
+                className="w-full sm:w-40 md:w-48 h-40 sm:h-36 object-cover"
               />
-              <div className="flex-1 p-4">
-                <h4 className="font-medium text-gray-800">{item?.tenPhong}</h4>
-                <p className="text-sm text-gray-500 mt-1">
+              <div className="flex-1 p-3 sm:p-4">
+                <h4 className="font-medium text-sm sm:text-base text-gray-800">{item?.tenPhong}</h4>
+                <p className="text-xs sm:text-sm text-gray-500 mt-1">
                   {item?.khach} khách · Phòng studio · {item?.giuong} giường ·{" "}
                   {item?.phongTam} phòng tắm
                 </p>
-                <p className="text-sm text-gray-500 flex gap-2 mt-1">
+                <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-2">
                   {item?.wifi && (
-                    <span className="px-3 py-1 bg-blue-50 text-blue-700 text-xs rounded-full font-medium">
+                    <span className="px-2 sm:px-3 py-1 bg-blue-50 text-blue-700 text-xs rounded-full font-medium whitespace-nowrap">
                       📶 Wifi
                     </span>
                   )}
                   {item?.bep && (
-                    <span className="px-3 py-1 bg-orange-50 text-orange-700 text-xs rounded-full font-medium">
+                    <span className="px-2 sm:px-3 py-1 bg-orange-50 text-orange-700 text-xs rounded-full font-medium whitespace-nowrap">
                       🍳 Bếp
                     </span>
                   )}
                   {item?.dieuHoa && (
-                    <span className="px-3 py-1 bg-cyan-50 text-cyan-700 text-xs rounded-full font-medium">
+                    <span className="px-2 sm:px-3 py-1 bg-cyan-50 text-cyan-700 text-xs rounded-full font-medium whitespace-nowrap">
                       ❄️ Điều hoà
                     </span>
                   )}
                   {item?.mayGiat && (
-                    <span className="px-3 py-1 bg-purple-50 text-purple-700 text-xs rounded-full font-medium">
+                    <span className="px-2 sm:px-3 py-1 bg-purple-50 text-purple-700 text-xs rounded-full font-medium whitespace-nowrap">
                       🧺 Máy giặt
                     </span>
                   )}
-                </p>
+                </div>
               </div>
-              <div className="p-4 text-right font-semibold text-gray-800 whitespace-nowrap">
+              <div className="p-3 sm:p-4 text-right sm:text-right text-left font-semibold text-sm sm:text-base text-gray-800 border-t sm:border-t-0 sm:border-l">
                 {item?.giaTien}{" "}
-                <span className="text-sm font-normal">/ đêm</span>
+                <span className="text-xs sm:text-sm font-normal">/ đêm</span>
               </div>
             </div>
           ))}
@@ -360,19 +361,19 @@ export default function UserDetailsPage() {
       {/* Popup (modal) chỉnh sửa hồ sơ */}
       {openModal && (
         <div
-          className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+          className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4"
           onClick={() => setOpenModal(false)}
         >
           <div
-            className="bg-white animate-in fade-in zoom-in duration-300 rounded-xl shadow-lg w-full max-w-md p-6 relative"
+            className="bg-white animate-in fade-in zoom-in duration-300 rounded-xl shadow-lg w-full max-w-md max-h-[90vh] overflow-y-auto p-4 sm:p-6 relative"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-xl font-semibold text-gray-800 mb-4">
+            <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4">
               Chỉnh sửa hồ sơ
             </h3>
             <Form {...form}>
               <form
-                className="space-y-4"
+                className="space-y-3 sm:space-y-4"
                 onSubmit={form.handleSubmit(onSubmit)}
               >
                 {/* Họ tên */}
@@ -381,13 +382,12 @@ export default function UserDetailsPage() {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Họ tên</FormLabel>
+                      <FormLabel className="text-sm">Họ tên</FormLabel>
                       <FormControl>
                         <Input
                           type="text"
                           {...field}
-                          className="w-full mt-1 px-3 py-2 border rounded-lg text-sm 
-              "
+                          className="w-full mt-1 px-3 py-2 border rounded-lg text-sm"
                         />
                       </FormControl>
                       <FormMessage />
@@ -400,7 +400,7 @@ export default function UserDetailsPage() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel className="text-sm">Email</FormLabel>
                       <FormControl>
                         <Input
                           type="text"
@@ -418,7 +418,7 @@ export default function UserDetailsPage() {
                   name="phone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Phone</FormLabel>
+                      <FormLabel className="text-sm">Phone</FormLabel>
                       <FormControl>
                         <Input
                           type="text"
@@ -435,15 +435,14 @@ export default function UserDetailsPage() {
                   name="gender"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Giới tính</FormLabel>
+                      <FormLabel className="text-sm">Giới tính</FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={String(field.value)}
                       >
                         <FormControl>
                           <SelectTrigger
-                            className="w-full mt-1 px-3 py-2 border rounded-lg text-sm 
-              focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full mt-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                           >
                             <SelectValue placeholder="gender" />
                           </SelectTrigger>
@@ -463,12 +462,12 @@ export default function UserDetailsPage() {
                   name="birthday"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Ngày sinh</FormLabel>
+                      <FormLabel className="text-sm">Ngày sinh</FormLabel>
                       <Popover open={open} onOpenChange={setOpen}>
                         <PopoverTrigger asChild>
                           <Button
                             variant="outline"
-                            className="w-full justify-between font-normal py-3 px-4 bg-white/80 border-2 border-gray-200 rounded-xl hover:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200"
+                            className="w-full justify-between font-normal py-2 sm:py-3 px-3 sm:px-4 bg-white/80 border-2 border-gray-200 rounded-xl hover:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 text-sm"
                           >
                             <div className="flex items-center space-x-2">
                               <svg
@@ -520,17 +519,17 @@ export default function UserDetailsPage() {
                 />
 
                 {/* Nút */}
-                <div className="flex justify-end gap-3 pt-2">
+                <div className="flex justify-end gap-2 sm:gap-3 pt-2">
                   <Button
                     type="button"
                     onClick={() => setOpenModal(false)}
-                    className="px-4 py-2 rounded-lg border  text-sm"
+                    className="px-3 sm:px-4 py-2 rounded-lg border text-xs sm:text-sm"
                   >
                     Hủy
                   </Button>
                   <Button
                     type="submit"
-                    className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 text-sm"
+                    className="px-3 sm:px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 text-xs sm:text-sm"
                   >
                     {isPending ? (
                       <div className="loader1 !w-4"></div>

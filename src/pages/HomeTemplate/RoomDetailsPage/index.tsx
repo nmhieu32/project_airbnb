@@ -504,7 +504,7 @@ export default function RoomDetailsPage() {
               <AlertDialogTrigger asChild>
                 <button
                   disabled={!checkIn || !checkOut}
-                  className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-4 px-6 rounded-xl font-semibold text-lg hover:from-purple-700 hover:to-blue-700 transform hover:scale-[1.02] transition-all duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none cursor-pointer"
+                  className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-4 px-6 rounded-xl font-semibold text-lg hover:from-purple-700 hover:to-blue-700 transform hover:scale-[1.02] transition-all duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none cursor-pointer [color-scheme:light]"
                 >
                   {checkIn && checkOut
                     ? "Đặt phòng ngay"
@@ -526,7 +526,7 @@ export default function RoomDetailsPage() {
                   </AlertDialogCancel>
                   <AlertDialogAction asChild>
                     <Button
-                      className="bg-gradient-to-r from-purple-600 to-blue-600 text-white cursor-pointer"
+                      className="bg-gradient-to-r from-purple-600 to-blue-600 text-white cursor-pointer [color-scheme:light]"
                       onClick={() => handleSubmit(onSubmit)()}
                     >
                       Đặt phòng
