@@ -232,7 +232,7 @@ export default function Header() {
                       Đăng nhập
                     </button>
                     <button
-                      className="w-full px-4 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                      className="w-full px-4 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 [color-scheme:light]"
                       onClick={() => setShowRegister(true)}
                     >
                       Đăng ký

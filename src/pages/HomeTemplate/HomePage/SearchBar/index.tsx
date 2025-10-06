@@ -167,7 +167,7 @@ export default function SearchBarHome() {
               <div className="p-4">
                 <button
                   onClick={handleSearch}
-                  className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 px-6 rounded-full hover:shadow-lg transition-all duration-300 transform hover:scale-105 cursor-pointer font-medium flex items-center justify-center gap-2"
+                  className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 px-6 rounded-full hover:shadow-lg transition-all duration-300 transform hover:scale-105 cursor-pointer font-medium flex items-center justify-center gap-2 [color-scheme:light]"
                 >
                   <Search className="h-5 w-5" />
                   <span>Tìm kiếm</span>
