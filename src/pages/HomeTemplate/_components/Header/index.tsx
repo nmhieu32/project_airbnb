@@ -136,19 +136,20 @@ export default function Header() {
                         <span className="mr-2">👤</span>
                         Thông tin người dùng
                       </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => navigate("user-details")}
-                        className="font-medium cursor-pointer py-3 px-4 hover:bg-purple-50 rounded-lg m-1 transition-colors"
-                      ></DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => navigate("/admin/users-management")}
-                        className="font-medium cursor-pointer py-3 px-4 hover:bg-purple-50 rounded-lg m-1 transition-colors"
-                      >
-                        <span className="mr-2">🛠️</span>
-                        Page Admin
-                      </DropdownMenuItem>
 
-                      <DropdownMenuSeparator className="my-1" />
+                      {user.user.role === "ADMIN" && (
+                        <>
+                          <DropdownMenuItem
+                            onClick={() => navigate("/admin/users-management")}
+                            className="font-medium cursor-pointer py-3 px-4 hover:bg-purple-50 rounded-lg m-1 transition-colors"
+                          >
+                            <span className="mr-2">🛠️</span>
+                            Page Admin
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator className="my-1" />
+                        </>
+                      )}
+
                       <DropdownMenuItem
                         onClick={handleLogout}
                         className="text-red-600 cursor-pointer hover:bg-red-50 font-medium py-3 px-4 rounded-lg m-1 transition-colors"
