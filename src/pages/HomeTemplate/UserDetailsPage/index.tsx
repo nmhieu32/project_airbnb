@@ -39,9 +39,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { ChevronDownIcon } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import z from "zod";
 import UserDetailsSke from "../_components/Skeleton/user-details.ske";
@@ -83,12 +83,17 @@ type FormInput = z.infer<typeof schema>;
 
 export default function UserDetailsPage() {
   const { user, setUser } = useAuthStore();
-  if (!user) return <Navigate to="/" />;
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!user) {
+      navigate("/", { replace: true });
+    }
+  }, [user, navigate]);
+
   const [openModal, setOpenModal] = useState(false);
   const [open, setOpen] = useState(false);
   const [openImg, setOpenImg] = useState(false);
-  const navigate = useNavigate();
-  const [preview, setPreview] = useState(user.user.avatar);
+  const [preview, setPreview] = useState(user?.user.avatar);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -97,8 +102,8 @@ export default function UserDetailsPage() {
     isError,
     isLoading,
   } = useQuery({
-    queryKey: ["user-detail", user.user.id],
-    queryFn: () => getRoomByUserApi(user.user.id),
+    queryKey: ["user-detail", user?.user.id],
+    queryFn: () => getRoomByUserApi(user!.user.id),
   });
   const mapped = listRoom?.map((item) => item.maPhong);
 
@@ -116,11 +121,11 @@ export default function UserDetailsPage() {
   });
 
   const { mutate: handleUpdateUser, isPending } = useMutation({
-    mutationFn: (data: FormInput) => updateUserApi(data, user.user.id),
+    mutationFn: (data: FormInput) => updateUserApi(data, user!.user.id),
     onSuccess: (userDetail) => {
       toast.success("Cập nhật thành công !");
       setOpenModal(false);
-      setUser({ ...user, user: userDetail });
+      setUser({ ...user!, user: userDetail });
     },
     onError: (error: any) => {
       console.log("🌿 ~ UserDetailsPage ~ error:", error);
@@ -133,11 +138,11 @@ export default function UserDetailsPage() {
   const form = useForm({
     defaultValues: {
       id: 0,
-      name: user.user.name,
-      email: user.user.email,
-      phone: user.user.phone,
-      birthday: user.user.birthday,
-      gender: user.user.gender,
+      name: user?.user.name,
+      email: user?.user.email,
+      phone: user?.user.phone,
+      birthday: user?.user.birthday,
+      gender: user?.user.gender,
       role: "USER",
     },
     resolver: zodResolver(schema),
@@ -152,12 +157,12 @@ export default function UserDetailsPage() {
   const handleOpenModal = () => {
     setOpenModal(true);
     form.reset({
-      id: user.user.id,
-      name: user.user.name,
-      email: user.user.email,
-      phone: user.user.phone,
-      birthday: user.user.birthday,
-      gender: user.user.gender,
+      id: user?.user.id,
+      name: user?.user.name,
+      email: user?.user.email,
+      phone: user?.user.phone,
+      birthday: user?.user.birthday,
+      gender: user?.user.gender,
       role: "USER",
     });
   };
@@ -174,21 +179,24 @@ export default function UserDetailsPage() {
         formData
       );
       toast.success("Thay đổi hình đại diện thành công !");
-      setUser({ ...user, user: response.data.content });
+      setUser({ ...user!, user: response.data.content });
       setSelectedFile(null);
       setOpenImg(false);
     } catch (error: any) {
       if (error.response) {
         toast.error(error.response.data.content);
         setSelectedFile(null);
-        setPreview(user.user.avatar);
+        setPreview(user?.user.avatar);
       }
       if (inputRef.current) {
         inputRef.current.value = "";
       }
     }
   };
-  if (isLoading && loadingRoomDetail) return <UserDetailsSke />;
+  if (!user) {
+    return <div className="loader"></div>;
+  }
+  if (isLoading || loadingRoomDetail) return <UserDetailsSke />;
   if (isError) return <div>Đã xảy ra lỗi</div>;
 
   return (
@@ -297,7 +305,9 @@ export default function UserDetailsPage() {
         <h2 className="text-xl sm:text-2xl font-bold">
           Xin chào, tôi là {user.user.name}
         </h2>
-        <p className="text-xs sm:text-sm text-gray-500 mt-1">Bắt đầu tham gia vào 2021</p>
+        <p className="text-xs sm:text-sm text-gray-500 mt-1">
+          Bắt đầu tham gia vào 2021
+        </p>
         <button
           onClick={handleOpenModal}
           className="text-xs sm:text-sm text-purple-500 hover:underline cursor-pointer font-bold"
@@ -305,7 +315,9 @@ export default function UserDetailsPage() {
           Chỉnh sửa hồ sơ
         </button>
 
-        <h3 className="mt-4 sm:mt-6 text-base sm:text-lg font-semibold">{roomDetails?.length || 0} Phòng đã thuê</h3>
+        <h3 className="mt-4 sm:mt-6 text-base sm:text-lg font-semibold">
+          {roomDetails?.length || 0} Phòng đã thuê
+        </h3>
 
         {/* Danh sách phòng */}
         <div className="mt-4 max-h-[400px] sm:max-h-[500px] overflow-y-auto space-y-3 sm:space-y-4 pr-2">
@@ -321,7 +333,9 @@ export default function UserDetailsPage() {
                 className="w-full sm:w-40 md:w-48 h-40 sm:h-36 object-cover"
               />
               <div className="flex-1 p-3 sm:p-4">
-                <h4 className="font-medium text-sm sm:text-base text-gray-800">{item?.tenPhong}</h4>
+                <h4 className="font-medium text-sm sm:text-base text-gray-800">
+                  {item?.tenPhong}
+                </h4>
                 <p className="text-xs sm:text-sm text-gray-500 mt-1">
                   {item?.khach} khách · Phòng studio · {item?.giuong} giường ·{" "}
                   {item?.phongTam} phòng tắm
@@ -349,7 +363,7 @@ export default function UserDetailsPage() {
                   )}
                 </div>
               </div>
-              <div className="p-3 sm:p-4 text-right sm:text-right text-left font-semibold text-sm sm:text-base text-gray-800 border-t sm:border-t-0 sm:border-l">
+              <div className="p-3 sm:p-4 text-right sm:text-right font-semibold text-sm sm:text-base text-gray-800 border-t sm:border-t-0 sm:border-l">
                 {item?.giaTien}{" "}
                 <span className="text-xs sm:text-sm font-normal">/ đêm</span>
               </div>
@@ -441,9 +455,7 @@ export default function UserDetailsPage() {
                         defaultValue={String(field.value)}
                       >
                         <FormControl>
-                          <SelectTrigger
-                            className="w-full mt-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          >
+                          <SelectTrigger className="w-full mt-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <SelectValue placeholder="gender" />
                           </SelectTrigger>
                         </FormControl>

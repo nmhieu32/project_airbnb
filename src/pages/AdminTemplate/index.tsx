@@ -9,7 +9,7 @@
 //   );
 // }
 import { AppSidebar } from "@/pages/AdminTemplate/components/app-sidebar";
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 
 import {
   Breadcrumb,
@@ -25,8 +25,13 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { useAuthStore } from "@/store/auth.store";
 
 export default function Page() {
+  const {user} = useAuthStore()
+  if(user && user.user.role === "USER" || !user) {
+    return <Navigate to="/"/>
+  }
   return (
     <SidebarProvider>
       <AppSidebar />
