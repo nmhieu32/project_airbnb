@@ -93,6 +93,7 @@ Preview bản build:
 - Xem danh sách phòng, chi tiết phòng
 - Đặt phòng (Booking)
 - Xem trải nghiệm & dịch vụ
+
 🧑‍💼 **Quản trị viên (Admin)**
 - Quản lý người dùng
 - Quản lý phòng
