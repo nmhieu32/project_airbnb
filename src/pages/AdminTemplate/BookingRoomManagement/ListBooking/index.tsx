@@ -56,7 +56,7 @@ export function TableBooking() {
     <div className="w-full overflow-x-auto">
       {/* Ô tìm kiếm */}
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">Danh sách đặt phòng</h2>
+    
         <Input
           type="text"
           placeholder="🔍 Tìm kiếm theo ID, Mã phòng, Mã người dùng..."
