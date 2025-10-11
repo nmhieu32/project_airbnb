@@ -19,6 +19,7 @@ import {
 import { getListLocationApi } from "@/services/location.api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { Location } from "@/interfaces/location.interface";
+import { validateRoom } from "@/utils/validateRoom";
 
 export function AddRoomForm({
   status,
@@ -57,6 +58,8 @@ export function AddRoomForm({
       banUi: false,
     },
   });
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   // 🟢 Lấy danh sách vị trí
   const { data: locations, isLoading: loadingLocations } = useQuery({
@@ -110,11 +113,17 @@ export function AddRoomForm({
 
   // 🟢 Mutation cập nhật phòng + ảnh
   const updateRoomMutation = useMutation({
-    mutationFn: async ({ id, data, file }: { id: number; data: any; file?: File | null }) => {
-      await updateRoomApi(id, data); // Cập nhật thông tin phòng
-      if (file) {
-        await uploadRoomImageApi(id, file); // Upload ảnh mới nếu có
-      }
+    mutationFn: async ({
+      id,
+      data,
+      file,
+    }: {
+      id: number;
+      data: any;
+      file?: File | null;
+    }) => {
+      await updateRoomApi(id, data);
+      if (file) await uploadRoomImageApi(id, file);
     },
     onSuccess: () => {
       alert("✅ Cập nhật phòng thành công!");
@@ -149,8 +158,24 @@ export function AddRoomForm({
     }
   };
 
+  // 🟢 Check validation từng trường khi onBlur
+  const handleBlur = (field: string) => {
+    const fieldError = validateRoom(formData)[field];
+    setErrors((prev) => ({
+      ...prev,
+      [field]: fieldError || "",
+    }));
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    const validationErrors = validateRoom(formData);
+    setErrors(validationErrors);
+    if (Object.keys(validationErrors).length > 0) {
+      alert("Vui lòng kiểm tra lại thông tin!");
+      return;
+    }
 
     const payload = {
       tenPhong: formData.tenPhong,
@@ -179,7 +204,7 @@ export function AddRoomForm({
       updateRoomMutation.mutate({
         id: Number(formData.id),
         data: payload,
-        file: formData.hinhAnh, // chỉ gửi nếu có file mới
+        file: formData.hinhAnh,
       });
     }
   };
@@ -222,98 +247,92 @@ export function AddRoomForm({
             />
           </div>
 
-          {/* Các trường thông tin */}
+          {/* Tên phòng */}
           <div className="col-span-2">
             <Label htmlFor="tenPhong">Tên phòng</Label>
             <Input
               id="tenPhong"
               value={formData.tenPhong}
               onChange={(e) => handleChange("tenPhong", e.target.value)}
+              onBlur={() => handleBlur("tenPhong")}
               placeholder="Nhập tên phòng"
             />
+            {errors.tenPhong && (
+              <p className="text-red-500 text-sm mt-1">{errors.tenPhong}</p>
+            )}
           </div>
 
+          {/* Mô tả */}
           <div className="col-span-2">
             <Label htmlFor="moTa">Mô tả</Label>
             <Textarea
               id="moTa"
               value={formData.moTa}
               onChange={(e) => handleChange("moTa", e.target.value)}
+              onBlur={() => handleBlur("moTa")}
               placeholder="Mô tả chi tiết"
             />
+            {errors.moTa && (
+              <p className="text-red-500 text-sm mt-1">{errors.moTa}</p>
+            )}
           </div>
 
           {/* Chọn vị trí */}
-          {/* Chọn vị trí (hiện khi hover) */}
-<div className="col-span-2 relative group">
-  <Label>Chọn vị trí</Label>
-  <div className="border rounded px-3 py-2 mt-1 cursor-pointer bg-white">
-    {formData.maViTri
-      ? locations?.find((loc: Location) => loc.id === Number(formData.maViTri))
-          ?.tenViTri || "Chưa chọn vị trí"
-      : "Di chuột để chọn vị trí"}
-  </div>
+          <div className="col-span-2 relative group">
+            <Label>Chọn vị trí</Label>
+            <div className="border rounded px-3 py-2 mt-1 cursor-pointer bg-white">
+              {formData.maViTri
+                ? locations?.find(
+                    (loc: Location) => loc.id === Number(formData.maViTri)
+                  )?.tenViTri || "Chưa chọn vị trí"
+                : "Di chuột để chọn vị trí"}
+            </div>
+            {!loadingLocations && (
+              <div className="absolute z-10 w-full max-h-60 overflow-y-auto bg-white border rounded shadow-md hidden group-hover:block mt-1">
+                {locations?.map((loc: Location) => (
+                  <div
+                    key={loc.id}
+                    onClick={() => {
+                      handleChange("maViTri", loc.id.toString());
+                      handleBlur("maViTri");
+                    }}
+                    className={`px-3 py-2 hover:bg-gray-100 cursor-pointer ${
+                      formData.maViTri === loc.id.toString()
+                        ? "bg-gray-50 font-medium"
+                        : ""
+                    }`}
+                  >
+                    {loc.tenViTri} - {loc.tinhThanh}, {loc.quocGia}
+                  </div>
+                ))}
+              </div>
+            )}
+            {errors.maViTri && (
+              <p className="text-red-500 text-sm mt-1">{errors.maViTri}</p>
+            )}
+          </div>
 
-  {/* Danh sách vị trí ẩn - hiện khi hover */}
-  {!loadingLocations && (
-    <div className="absolute z-10 w-full max-h-60 overflow-y-auto bg-white border rounded shadow-md hidden group-hover:block mt-1">
-      {locations?.map((loc: Location) => (
-        <div
-          key={loc.id}
-          onClick={() => handleChange("maViTri", loc.id.toString())}
-          className={`px-3 py-2 hover:bg-gray-100 cursor-pointer ${
-            formData.maViTri === loc.id.toString() ? "bg-gray-50 font-medium" : ""
-          }`}
-        >
-          {loc.tenViTri} - {loc.tinhThanh}, {loc.quocGia}
-        </div>
-      ))}
-    </div>
-  )}
-</div>
-
-
-          {/* Thông số */}
-          <div>
-            <Label>Số khách</Label>
-            <Input
-              type="number"
-              value={formData.soKhach}
-              onChange={(e) => handleChange("soKhach", e.target.value)}
-            />
-          </div>
-          <div>
-            <Label>Số phòng ngủ</Label>
-            <Input
-              type="number"
-              value={formData.soPhongNgu}
-              onChange={(e) => handleChange("soPhongNgu", e.target.value)}
-            />
-          </div>
-          <div>
-            <Label>Số giường</Label>
-            <Input
-              type="number"
-              value={formData.soGiuong}
-              onChange={(e) => handleChange("soGiuong", e.target.value)}
-            />
-          </div>
-          <div>
-            <Label>Số phòng tắm</Label>
-            <Input
-              type="number"
-              value={formData.soPhongTam}
-              onChange={(e) => handleChange("soPhongTam", e.target.value)}
-            />
-          </div>
-          <div>
-            <Label>Giá ($)</Label>
-            <Input
-              type="number"
-              value={formData.giaTien}
-              onChange={(e) => handleChange("giaTien", e.target.value)}
-            />
-          </div>
+          {/* Các input số */}
+          {[
+            { key: "soKhach", label: "Số khách" },
+            { key: "soPhongNgu", label: "Số phòng ngủ" },
+            { key: "soGiuong", label: "Số giường" },
+            { key: "soPhongTam", label: "Số phòng tắm" },
+            { key: "giaTien", label: "Giá ($)" },
+          ].map(({ key, label }) => (
+            <div key={key}>
+              <Label>{label}</Label>
+              <Input
+                type="number"
+                value={formData[key as keyof typeof formData] as string}
+                onChange={(e) => handleChange(key, e.target.value)}
+                onBlur={() => handleBlur(key)}
+              />
+              {errors[key] && (
+                <p className="text-red-500 text-sm mt-1">{errors[key]}</p>
+              )}
+            </div>
+          ))}
 
           {/* Tiện nghi */}
           <div className="col-span-2 grid grid-cols-2 gap-2 border-t pt-3">
@@ -321,7 +340,9 @@ export function AddRoomForm({
               <div key={key} className="flex items-center gap-2">
                 <Checkbox
                   id={key}
-                  checked={formData.tienNghi[key as keyof typeof formData.tienNghi]}
+                  checked={formData.tienNghi[
+                    key as keyof typeof formData.tienNghi
+                  ]}
                   onCheckedChange={() =>
                     handleCheckbox(key as keyof typeof formData.tienNghi)
                   }
